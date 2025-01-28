@@ -39,9 +39,9 @@
                 <button class="btn btn-outline-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit User">
                   <%= link_to 'Edit User', edit_user_path(user) %>
                 </button>
-                <button class="btn btn-outline-danger me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete User">
-                  Delete User
-                </button>
+                
+                <%= button_to 'Delete User', user_path(user), method: :delete, data: { confirm: 'Are you sure you want to discard this user?' }, class: 'btn btn-outline-danger me-2', title: 'Delete User' %>
+                
               </td>
             </tr>
           <% end %>

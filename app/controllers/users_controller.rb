@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
-    before_action :set_user, only: [:edit, :update]
+    before_action :set_user, only: [:edit, :update, :show, :destroy]
 
     def index
-        @users = User.all 
+        @users = User.kept
     end
 
     def show
@@ -10,20 +10,20 @@ class UsersController < ApplicationController
     end
 
     def new
-        @user = User.new
+      @user = User.new
+    end
+    
+    def create
+      params[:user][:role] = params[:user][:role].to_i if params[:user][:role].present?
+  
+      @user = User.new(user_params)
+      #Due to strong parameters
+      
+      if @user.save
+        redirect_to user_path(@user) , notice: "User created"
+      else
+        render :new, status: :unprocessable_entity
       end
-    
-      def create
-        params[:user][:role] = params[:user][:role].to_i
-    
-        @user = User.new(user_params)
-        #Due to strong parameters
-        
-        if @user.save
-          redirect_to user_path(@user) , notice: "User created"
-        else
-          render :new
-        end
     end
 
     def update
@@ -33,6 +33,12 @@ class UsersController < ApplicationController
           render :edit
         end
     end
+
+    #Soft Delete
+    def destroy
+      @user.discard
+      redirect_to users_path, notice: 'User was successfully discarded.'
+    end
     
       # Set user based on ID from params
     def set_user
@@ -41,7 +47,7 @@ class UsersController < ApplicationController
 
     def user_params
         #byebug
-        params.require(:user).permit(:first_name, :last_name, :email, :password_digest, :profile_image_url, :role)
+        params.require(:user).permit(:first_name, :last_name, :email, :password, :profile_image_url, :role)
     end
 
 end

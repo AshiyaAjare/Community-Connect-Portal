@@ -1,5 +1,7 @@
 class User < ApplicationRecord
-    enum role: {contributor: 0, moderator: 1, admin: 2}
+    include Discard::Model
+
+    enum role: {contributor_user: 0, moderator_user: 1, admin_user: 2}
     has_many :query, dependent: :destroy
     has_many :responses, dependent: :destroy
 
