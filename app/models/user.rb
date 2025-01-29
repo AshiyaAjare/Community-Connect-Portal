@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+    require "securerandom"
+    
     include Discard::Model
 
     enum role: {contributor_user: 0, moderator_user: 1, admin_user: 2}
