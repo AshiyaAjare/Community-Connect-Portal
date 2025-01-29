@@ -25,7 +25,8 @@
           <% @users.each do |user| %>
             <tr>
               <td>
-                <img src="<%= user.profile_image %>" class="rounded-circle" alt="<%= user.first_name %>" width="50" height="50">
+              <%= image_tag(user.profile_image.attached? ? user.profile_image : '/assets/images/default_image.png', class: "rounded-circle", alt: user.first_name, width: 50, height: 50) %>
+
               </td>
 
               <td><%= "#{user.first_name} #{user.last_name}" %></td>
@@ -34,14 +35,13 @@
 
               <td>
                 <button class="btn btn-outline-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="View Profile">
-                <%= link_to 'View Profile', user_path(user) %>
+                <%= link_to 'View', user_path(user) %>
                 </button>
                 <button class="btn btn-outline-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit User">
-                  <%= link_to 'Edit User', edit_user_path(user) %>
+                  <%= link_to 'Edit', edit_user_path(user) %>
                 </button>
                 
-                <%= button_to 'Delete User', user_path(user), method: :delete, data: { confirm: 'Are you sure you want to discard this user?' }, class: 'btn btn-outline-danger me-2', title: 'Delete User' %>
-                
+                <%= button_to 'Delete', user_path(user), method: :delete, data: { confirm: 'Are you sure you want to discard this user?' }, class: 'btn btn-outline-danger me-2' %>
               </td>
             </tr>
           <% end %>
