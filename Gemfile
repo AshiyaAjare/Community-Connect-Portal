@@ -8,6 +8,8 @@ gem "sprockets-rails"
 gem 'discard', '~> 1.0'
 #Bcrypt
 gem 'bcrypt', '~> 3.1.7'
+#JWT
+gem 'jwt'
 #API Versioning
 gem 'versionist'
 # Use sqlite3 as the database for Active Record
