@@ -1,7 +1,18 @@
 Rails.application.routes.draw do
+  # devise_for :users
+
+  # config/routes.rb
+devise_for :users, controllers: {
+  registrations: 'users/registrations',
+  passwords: 'devise/passwords'
+}
+
+
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   namespace :api do
     namespace :v1 do
+      post '/auth/login', to: 'authentication#login'
       resources :users, only: [:index, :show, :create, :update]
     end
   end
@@ -13,8 +24,10 @@ Rails.application.routes.draw do
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
+  root to: "users#index"
+
   resources :users
-  post '/auth/login', to: 'authentication#login'
+  #post '/auth/login', to: 'authentication#login'
 
   # Defines the root path route ("/")
   # root "posts#index"

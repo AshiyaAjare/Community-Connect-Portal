@@ -16,23 +16,27 @@ class UsersController < ApplicationController
     
     def create
       params[:user][:role] = params[:user][:role].to_i if params[:user][:role].present?
-  
+      
       @user = User.new(user_params)
-      #Due to strong parameters
       
       if @user.save
         if @user.profile_image.attached?
-          @user.profile_image_url = url_for(@user.profile_image) 
+          @user.profile_image_url = url_for(@user.profile_image)
         else
-          @user.profile_image_url = url_for('assets/images/default_image.png') 
+          @user.profile_image_url = url_for('assets/images/default_image.png')
         end
         @user.save
-        redirect_to user_path(@user) , notice: "User created"
+        flash[:notice] = "User created successfully"
+        respond_to do |format|
+          format.html { redirect_to users_path, notice: "User created" }
+          format.turbo_stream # This will look for create.turbo_stream.erb
+        end
       else
+        flash[:alert] = "Error creating user: #{@user.errors.full_messages.join(', ')}"
         render :new, status: :unprocessable_entity
       end
     end
-
+    
     def update
         if @user.update(user_params)
           @user.profile_image_url = url_for(@user.profile_image) if @user.profile_image.attached?

@@ -1,8 +1,10 @@
 module Api
   module V1
     class UsersController < BaseController
+      #skip_before_action :authenticate_user!
+
       def index
-        users = User.select(:id, :first_name, :last_name, :email, :role, :password_digest, :profile_image_url)
+        users = User.select(:id, :first_name, :last_name, :email, :role, :profile_image_url)
         render json: users
       end
 

@@ -1,0 +1,14 @@
+<!-- app/views/users/_user.html.erb -->
+<tr id="user_<%= user.id %>">
+  <td>
+    <%= image_tag(user.profile_image.attached? ? user.profile_image : '/assets/images/default_image.png', class: "rounded-circle", width: 50, height: 50) %>
+  </td>
+  <td><%= user.first_name %> <%= user.last_name %></td>
+  <td><%= user.email %></td>
+  <td><%= user.role.capitalize %></td>
+  <td>
+    <%= link_to "View", user_path(user), class: "btn btn-info" %>
+    <%= link_to "Edit", edit_user_path(user), class: "btn btn-primary" %>
+    <%= button_to "Delete", user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </td>
+</tr>

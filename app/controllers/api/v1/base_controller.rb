@@ -3,24 +3,31 @@ module Api
     class BaseController < ApplicationController
       protect_from_forgery with: :null_session
 
-      include JsonWebToken
+      before_action :authenticate_request  # Use JWT authentication
+      skip_before_action :authenticate_user!, raise: false  # Prevent Devise from blocking API requests
 
-      before_action :authenticate_request
+      respond_to :json
 
       private
 
       def authenticate_request
         header = request.headers['Authorization']
         token = header.split(' ').last if header
-
-        begin
-          decoded_token = JsonWebToken.jwt_decode(token)
-          @current_user = User.find(decoded_token[:user_id])
-        rescue ActiveRecord::RecordNotFound, JWT::DecodeError
-          render json: { error: 'Unauthorized' }, status: :unauthorized
-        end
-      end
       
+        if token.blank?
+          render json: { error: 'Token missing' }, status: :unauthorized and return
+        end
+      
+        decoded_token = JsonWebToken.decode(token)
+      
+        if decoded_token.nil? || decoded_token[:user_id].nil?
+          render json: { error: 'Invalid token' }, status: :unauthorized and return
+        end
+      
+        @current_user = User.find_by(id: decoded_token[:user_id])
+      
+        render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
+      end      
     end
   end
 end

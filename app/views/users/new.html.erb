@@ -2,7 +2,7 @@
 <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
 <div class="card p-6" style="width: 36rem;">
     
-    <%= form_with model:@user, url:users_path, method: :post do |f|%>
+<%= form_with model: @user, url: users_path, method: :post, data: { turbo: true } do |f| %>
     <!-- 2 column grid layout with text inputs for the first and last names -->
     <div class="row mb-4">
         <div class="col">

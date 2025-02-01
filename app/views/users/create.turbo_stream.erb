@@ -1,0 +1,6 @@
+<!-- app/views/users/create.turbo_stream.erb -->
+<turbo-stream action="append" target="users_table_body">
+  <template>
+    <%= render @user %> <!-- This renders _user.html.erb -->
+  </template>
+</turbo-stream>

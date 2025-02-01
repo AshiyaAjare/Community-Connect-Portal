@@ -15,9 +15,47 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= turbo_stream_from current_user if user_signed_in? %>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
   </head>
 
   <body>
-    <%= yield %>
+    <div class="d-flex">
+      <!-- Sidebar -->
+      <nav class="bg-dark text-white vh-100 p-3" style="width: 250px;">
+        <h4 class="text-center">Dashboard</h4>
+        <hr>
+        
+        <% if user_signed_in? %>
+          <div class="text-center mb-3">
+            <p>Welcome, <%= current_user.first_name %></p>
+            <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'btn btn-danger w-100' %>
+          </div>
+          <hr>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <%= link_to "Users List", users_path, class: "nav-link text-white" %>
+            </li>
+            <li class="nav-item">
+              <%= link_to "Add User", new_user_path, class: "nav-link text-white" %>
+            </li>
+          </ul>
+        <% else %>
+          <div class="text-center">
+            <p>Please log in</p>
+            <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-primary w-100" %>
+            <%= link_to "Log In", new_user_session_path, class: "btn btn-success w-100 mt-2" %>
+          </div>
+        <% end %>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="flex-grow-1 p-4">
+        <%= yield %> <!-- Page Content -->
+      </div>
+    </div>
   </body>
 </html>
