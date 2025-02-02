@@ -32,7 +32,7 @@
         <% if user_signed_in? %>
           <div class="text-center mb-3">
             <p>Welcome, <%= current_user.first_name %></p>
-            <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'btn btn-danger w-100' %>
+            <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, data: { turbo: false },class: 'btn btn-danger w-100' %>
           </div>
           <hr>
           <ul class="nav flex-column">
@@ -41,6 +41,9 @@
             </li>
             <li class="nav-item">
               <%= link_to "Add User", new_user_path, class: "nav-link text-white" %>
+            </li>
+            <li class="nav-item">
+              <%= link_to "View Tags", tags_path, class: "nav-link text-white" %>
             </li>
           </ul>
         <% else %>

@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!, unless: :devise_controller?
 
+  #rescue_from User::Unauthorized, with: :user_not_authenticated
+
 
   protected
 
@@ -19,5 +21,28 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :role])
     devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name])
   end
+
+
+  def authenticate_user!
+    Rails.logger.debug "Checking authentication..."
+    
+    if request.format.html?
+      # For web requests, redirect to sign-in if the user is not authenticated
+      unless user_signed_in?
+        Rails.logger.debug "Redirecting to sign-in..."
+        redirect_to new_user_session_path and return
+      end
+    else
+      # For API requests, return JSON unauthorized error instead of redirecting
+      unless user_signed_in?
+        render json: { error: "You need to sign in or sign up before continuing." }, status: :unauthorized
+      end
+    end
+  end
+
+  def after_sign_out_path_for(_resource_or_scope)
+    new_user_session_path
+  end
+  
 
 end

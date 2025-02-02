@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   # config/routes.rb
 devise_for :users, controllers: {
   registrations: 'users/registrations',
+  sessions: 'users/sessions',
   passwords: 'devise/passwords'
 }
 
@@ -14,6 +15,7 @@ devise_for :users, controllers: {
     namespace :v1 do
       post '/auth/login', to: 'authentication#login'
       resources :users, only: [:index, :show, :create, :update]
+      resources :tags
     end
   end
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -27,6 +29,7 @@ devise_for :users, controllers: {
   root to: "users#index"
 
   resources :users
+  resources :tags
   #post '/auth/login', to: 'authentication#login'
 
   # Defines the root path route ("/")

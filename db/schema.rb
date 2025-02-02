@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_31_075554) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_02_191511) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -45,6 +45,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_31_075554) do
     t.integer "action", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["query_id"], name: "index_moderation_logs_on_query_id"
     t.index ["response_id"], name: "index_moderation_logs_on_response_id"
   end
@@ -55,6 +56,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_31_075554) do
     t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["user_id"], name: "index_queries_on_user_id"
   end
 
@@ -89,6 +91,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_31_075554) do
     t.boolean "flagged", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["query_id"], name: "index_responses_on_query_id"
     t.index ["user_id"], name: "index_responses_on_user_id"
   end
@@ -97,6 +100,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_31_075554) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 

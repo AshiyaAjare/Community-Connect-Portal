@@ -3,6 +3,13 @@
 class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
 
+  def destroy
+    super do
+      # Instead of return redirect_to, return the redirect URL like this:
+      redirect_to new_user_session_path and return
+    end
+  end
+
   # GET /resource/sign_in
   # def new
   #   super
