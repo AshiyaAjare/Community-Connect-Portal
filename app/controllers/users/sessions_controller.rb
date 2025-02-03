@@ -5,7 +5,6 @@ class Users::SessionsController < Devise::SessionsController
 
   def destroy
     super do
-      # Instead of return redirect_to, return the redirect URL like this:
       redirect_to new_user_session_path and return
     end
   end

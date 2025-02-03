@@ -39,9 +39,11 @@
 
           <!-- Read-Only Role Field -->
           <div class="mb-3">
-            <%= f.label :role, class: "form-label" %>
-            <input type="text" class="form-control" value="Admin" readonly>
-            <%= f.hidden_field :role, value: "admin_user" %>
+          <%= f.label :role, "Role", class: "form-label" %>
+          <%= f.select :role, 
+               [["Admin", "admin_user"]], 
+               { prompt: "Select Role" }, 
+               { class: "form-select", aria: { label: "Default select example" } } %>
           </div>
 
           <div class="d-grid">

@@ -65,7 +65,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     build_resource(sign_up_params)
 
     # Set the default role to 'admin_user' if no role is provided
-    resource.role ||= :admin_user  # Set the role to admin_user if not set
+    
 
     # Save the resource (user) and handle success or failure
     if resource.save
