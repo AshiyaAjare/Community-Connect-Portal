@@ -1,54 +1,28 @@
-<!-- app/views/users/index.html.erb -->
-
 <div class="container mt-5">
-  <div class="row">
-    <div class="col">
-
-    <div class="d-flex justify-content-between mb-3">
-    <h1>Users</h1>
-    <a href="<%= new_user_path %>" class="btn btn-success ms-auto">
-      Add User
-    </a>
+  <div class="row justify-content-between align-items-center mb-4">
+    <div class="col-auto">
+      <h2 class="fw-bold">Users List</h2>
+    </div>
+    
   </div>
 
-      <table class="table table-striped table-hover">
-        <thead>
+  <!-- Turbo Frame for Users Table -->
+  <turbo-frame id="users_table">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover text-center align-middle shadow-sm">
+        <thead class="table-dark">
           <tr>
-            <th scope="col">Profile</th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Role</th>
-            <th scope="col">Actions</th>
+            <th>Profile</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
-          <% @users.each do |user| %>
-            <tr>
-              <td>
-                <img src="<%= user.profile_image %>" class="rounded-circle" alt="<%= user.first_name %>" width="50" height="50">
-              </td>
-
-              <td><%= "#{user.first_name} #{user.last_name}" %></td>
-              <td><%= user.email %></td>
-              <td><%= user.role.capitalize %></td>
-
-              <td>
-                <button class="btn btn-outline-info me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="View Profile">
-                <%= link_to 'View Profile', user_path(user) %>
-                </button>
-                <button class="btn btn-outline-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit User">
-                  <%= link_to 'Edit User', edit_user_path(user) %>
-                </button>
-                <button class="btn btn-outline-danger me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete User">
-                  Delete User
-                </button>
-              </td>
-            </tr>
-          <% end %>
+        <tbody id="users_table_body">
+          <%= render @users %>  <!-- Renders _user.html.erb partial for each user -->
         </tbody>
       </table>
     </div>
-  </div>
+  </turbo-frame>
 </div>
-
-

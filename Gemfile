@@ -4,6 +4,14 @@ source "https://rubygems.org"
 gem "rails", "~> 7.2.2", ">= 7.2.2.1"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
+#Discard - for soft delete
+gem 'discard', '~> 1.0'
+#Bcrypt
+gem 'bcrypt', '~> 3.1.7'
+#JWT
+gem 'jwt'
+#API Versioning
+gem 'versionist'
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 1.4"
 # Use the Puma web server [https://github.com/puma/puma]
@@ -51,6 +59,8 @@ group :development do
 
   # Highlight the fine-grained location where an error occurred [https://github.com/ruby/error_highlight]
   gem "error_highlight", ">= 0.4.0", platforms: [ :ruby ]
+  gem 'letter_opener'
+  gem 'letter_opener_web'
 end
 
 group :test do
@@ -59,6 +69,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "devise", "~> 4.9"
-
 gem "jsbundling-rails", "~> 1.3"
+gem 'hotwire-rails'
+
+gem "devise", "~> 4.9"

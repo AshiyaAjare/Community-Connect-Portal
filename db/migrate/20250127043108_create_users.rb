@@ -3,11 +3,13 @@ class CreateUsers < ActiveRecord::Migration[7.2]
     create_table :users do |t|
       t.string :first_name
       t.string :last_name
-      t.string :email
+      #t.string :email
       t.integer :role, default: 0, null: false
-      t.string :password_digest
+      #t.string :password_digest
       t.string :profile_image_url
       t.timestamps
     end
   end
 end
+
+

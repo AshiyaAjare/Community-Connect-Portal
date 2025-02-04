@@ -1,7 +1,8 @@
 <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
     <div class="card" style="width: 36rem;">
 
-    <img class="card-img-top" src="<%= @users.profile_image %>" class="rounded-circle" alt="<%= @users.first_name %>">
+    <%= image_tag(@user.profile_image.attached? ? @user.profile_image : '/assets/images/default_image.png',  alt: @user.first_name, width: 150, height: 150) %>
+
 
     <div class="card-body">
         <h5 class="card-title"><%= "#{@users.first_name} #{@users.last_name}" %></h5>
