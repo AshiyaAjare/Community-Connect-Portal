@@ -45,7 +45,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_02_191511) do
     t.integer "action", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "discarded_at"
     t.index ["query_id"], name: "index_moderation_logs_on_query_id"
     t.index ["response_id"], name: "index_moderation_logs_on_response_id"
   end
@@ -54,6 +53,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_02_191511) do
     t.integer "user_id", null: false
     t.string "title"
     t.string "content"
+    t.boolean "flagged", default: false
+    t.boolean "status", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"

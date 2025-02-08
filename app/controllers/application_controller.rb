@@ -34,14 +34,28 @@ class ApplicationController < ActionController::Base
       end
     else
       # For API requests, return JSON unauthorized error instead of redirecting
-      unless user_signed_in?
-        render json: { error: "You need to sign in or sign up before continuing." }, status: :unauthorized
+      header = request.headers['Authorization']
+      token = header.split(' ').last if header
+    
+      if token.blank?
+        render json: { error: 'Token missing' }, status: :unauthorized and return
       end
+    
+      decoded_token = JsonWebToken.decode(token)
+    
+      if decoded_token.nil? || decoded_token[:user_id].nil?
+        render json: { error: 'Invalid token' }, status: :unauthorized and return
+      end
+    
+      @current_user = User.find_by(id: decoded_token[:user_id])
+    
+      render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
     end
   end
 
-  def after_sign_out_path_for(_resource_or_scope)
-    new_user_session_path
+  def after_sign_up_path_for(resource)
+    sign_out resource # Ensure the newly created user is logged out immediately
+    users_path # Redirect to the users list or any other admin page
   end
   
 

@@ -26,12 +26,13 @@
     <div class="d-flex">
       <!-- Sidebar -->
       <nav class="bg-dark text-white vh-100 p-3" style="width: 250px;">
-        <h4 class="text-center">Dashboard</h4>
+        <h4 class="text-center">Admin Panel</h4>
         <hr>
         
         <% if user_signed_in? %>
           <div class="text-center mb-3">
-            <p>Welcome, <%= current_user.first_name %></p>
+            <%= image_tag(current_user.profile_image_url, class: "rounded-circle", width: 50, height: 50) %>
+            <p>Welcome, <%= current_user.first_name %> <%= current_user.last_name %> <br> <small>Signed-in as: <%= current_user.email %></small> </p>
             <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, data: { turbo: false },class: 'btn btn-danger w-100' %>
           </div>
           <hr>
@@ -45,11 +46,14 @@
             <li class="nav-item">
               <%= link_to "View Tags", tags_path, class: "nav-link text-white" %>
             </li>
+            <li class="nav-item">
+              <%= link_to "View Queries", queries_path, class: "nav-link text-white" %>
+            </li>
           </ul>
         <% else %>
           <div class="text-center">
             <p>Please log in</p>
-            <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-primary w-100" %>
+            <%# <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-primary w-100" %>
             <%= link_to "Log In", new_user_session_path, class: "btn btn-success w-100 mt-2" %>
           </div>
         <% end %>

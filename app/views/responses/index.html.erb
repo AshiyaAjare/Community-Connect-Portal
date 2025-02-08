@@ -1,0 +1,26 @@
+<h1>Responses</h1>
+
+<table class="table table-hover table-bordered shadow-sm">
+  <thead class="table-dark">
+    <tr>
+      <th>Content</th>
+      <th>Tags</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @responses.each do |response| %>
+      <tr>
+        <td><%= response.content %></td>
+        <td>
+          <% response.tags.each do |tag| %>
+            <span class="tag"><%= tag.name %></span>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to 'Delete', response, method: :delete, data: { confirm: "Are you sure?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

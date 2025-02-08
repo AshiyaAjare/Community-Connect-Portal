@@ -35,11 +35,9 @@
     <div data-mdb-input-init class="form-outline mb-4">
     <%= f.label :role, "Role", class: "form-label" %>
     <%= f.select :role, 
-         [["Contributor", "contributor_user"], ["Moderator", "moderator_user"], ["Admin", "admin_user"]], 
+         [["Contributor", "contributor_user"], ["Moderator", "moderator_user"]], 
          { prompt: "Select Role" }, 
          { class: "form-select", aria: { label: "Default select example" } } %>
-
-
     </div>
 
 

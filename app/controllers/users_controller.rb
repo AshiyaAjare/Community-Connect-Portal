@@ -20,13 +20,15 @@ class UsersController < ApplicationController
       @user = User.new(user_params)
       
       if @user.save
+        sign_out @user
         if @user.profile_image.attached?
           @user.profile_image_url = url_for(@user.profile_image)
         else
-          @user.profile_image_url = url_for('assets/images/default_image.png')
+          @user.profile_image_url = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon'
         end
         @user.save
         flash[:notice] = "User created successfully"
+        
         respond_to do |format|
           format.html { redirect_to users_path, notice: "User created" }
           format.turbo_stream # This will look for create.turbo_stream.erb

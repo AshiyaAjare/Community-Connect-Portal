@@ -1,0 +1,24 @@
+<h1 class="my-4 text-center">Queries</h1>
+
+<div class="table-responsive">
+  <table class="table table-hover table-bordered shadow-sm">
+    <thead class="table-dark">
+      <tr>
+        <th>Title</th>
+        <th>Tags</th>
+        <th>Responses Count</th>
+        <th>Created By</th>
+        <th>Status</th>
+        <th>Flagged</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="query_table_body">
+      <% @queries.each do |query| %>
+        <%= turbo_frame_tag "query_#{query.id}" do %>
+          <%= render partial: 'queries/query_row', locals: { query: query } %>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
