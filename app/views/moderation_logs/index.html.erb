@@ -1,2 +1,22 @@
-<h1>ModerationLogs#index</h1>
-<p>Find me in app/views/moderation_logs/index.html.erb</p>
+<h1 class="my-4 text-center">Moderation Logs</h1>
+
+<div class="table-responsive">
+  <table class="table table-hover table-bordered shadow-sm">
+    <thead class="table-dark">
+      <tr>
+        <th>Type</th>
+        <th>ID</th>
+        <th>Action Taken</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @moderation_logs.each do |log| %>
+        <tr>
+          <td><%= log.query_id.present? ? 'Query' : 'Response' %></td>
+          <td><%= log.query_id.present? ? log.query_id : log.response_id %></td>
+          <td><%= log.action %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

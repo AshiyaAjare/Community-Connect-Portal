@@ -81,6 +81,11 @@ class QueriesController < ApplicationController
             flash.now[:alert] = "You are not authorized to perform this action."
         end
 
+        if @query.flagged?
+            log = ModerationLog.find_or_initialize_by(query_id: @query.id, action: :flag)
+            log.update(updated_at: Time.current)
+        end
+
         respond_to do |format|
             format.html { redirect_to queries_path }
             # format.turbo_stream { render turbo_stream: turbo_stream.replace("query_#{@query.id}", partial: 'queries/query_row', locals: { query: @query }) }
@@ -95,8 +100,15 @@ class QueriesController < ApplicationController
   
     # DELETE /queries/1
     def destroy
-      @query.destroy
-      redirect_to queries_url, notice: 'Query was successfully destroyed.'
+      @query.discard
+      log = ModerationLog.find_or_initialize_by(query_id: @query.id, action: :soft_delete)
+      log.update(updated_at: Time.current)
+      respond_to do |format|
+        format.html { redirect_to queries_path, notice: "Query deleted." }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.remove("query-#{@query.id}")
+        end
+      end
     end
   
     private

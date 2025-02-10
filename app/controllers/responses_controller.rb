@@ -50,9 +50,19 @@ class ResponsesController < ApplicationController
     def toggle_approval
       @response = Response.find(params[:id])
       @response.update(approval: !@response.approval)
-      @response.query.update!(status: true) if @response.approval
+      if @response.approval?
+        log = ModerationLog.create(response_id: @response.id, action: :approve)
+        unless log.persisted?
+          Rails.logger.error "Failed to save ModerationLog: #{log.errors.full_messages.join(", ")}"
+        end
+      end
+      if @response.approval?
+        @response.query.update!(status: :true) 
+      else
+        @response.query.update!(status: :false)
+      end
       respond_to do |format|
-        format.html { redirect_to responses_path, notice: "Approval status updated." }
+        format.html { redirect_to responses_path, notice: "Flag status updated." }
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace("response-#{@response.id}", partial: "responses/response", locals: { response: @response })
         end
@@ -63,8 +73,14 @@ class ResponsesController < ApplicationController
     def toggle_flag
       @response = Response.find(params[:id])
       @response.update(flagged: !@response.flagged)
+      if @response.flagged?
+        log = ModerationLog.create(response_id: @response.id, action: :flag)
+        unless log.persisted?
+          Rails.logger.error "Failed to save ModerationLog: #{log.errors.full_messages.join(", ")}"
+        end
+      end
       respond_to do |format|
-        format.html { redirect_to responses_path, notice: "Approval status updated." }
+        format.html { redirect_to responses_path, notice: "Flag status updated." }
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace("response-#{@response.id}", partial: "responses/response", locals: { response: @response })
         end
@@ -73,10 +89,14 @@ class ResponsesController < ApplicationController
   
     # DELETE /responses/:id
     def destroy
-      @response.destroy
+      @response.discard
+      log = ModerationLog.find_or_initialize_by(response_id: @response.id, action: :soft_delete)
+      log.update(updated_at: Time.current)
       respond_to do |format|
         format.html { redirect_to responses_path, notice: "Response deleted." }
-        format.turbo_stream # No need to manually create a Turbo Stream view!
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.remove("response-#{@response.id}")
+        end
       end
     end
   

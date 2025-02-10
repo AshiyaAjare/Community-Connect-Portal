@@ -52,6 +52,8 @@ Rails.application.routes.draw do
       patch :toggle_flag
     end
   end
+
+  resources :moderation_logs
   
   #post '/auth/login', to: 'authentication#login'
 

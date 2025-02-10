@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
 
 
   def authenticate_user!
+
     Rails.logger.debug "Checking authentication..."
     
     if request.format.html? || request.format.turbo_stream?
@@ -32,6 +33,7 @@ class ApplicationController < ActionController::Base
         Rails.logger.debug "Redirecting to sign-in..."
         redirect_to new_user_session_path and return
       end
+
     else
       # For API requests, return JSON unauthorized error instead of redirecting
       header = request.headers['Authorization']
@@ -51,6 +53,7 @@ class ApplicationController < ActionController::Base
     
       render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
     end
+    
   end
 
   def after_sign_up_path_for(resource)
