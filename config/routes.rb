@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "moderation_logs/index"
   # devise_for :users
 
   # config/routes.rb
@@ -41,7 +42,16 @@ Rails.application.routes.draw do
     end
     resources :responses, only: [:create]  
   end
-  resources :responses, only: [:index, :show, :edit, :destroy]
+  
+  resources :responses do
+    member do
+      patch :upvote
+      patch :downvote
+      patch :like
+      patch :toggle_approval
+      patch :toggle_flag
+    end
+  end
   
   #post '/auth/login', to: 'authentication#login'
 

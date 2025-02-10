@@ -11,98 +11,70 @@
 #User.create!(first_name: "Ashiya", last_name: "Ajare", email: "admin@gmail.com", role: "admin_user", password: "password@123")
 
 
-# Sample users
-# user1 = User.create!(
-#   first_name: "John", 
-#   last_name: "Doe", 
-#   email: "john.doe2@example.com", 
-#   password: "password", 
-#   role: :moderator_user
-# )
+# # Clear existing data
+# ResponseTag.delete_all
+# QueryTag.delete_all
+# Response.delete_all
+# Query.delete_all
+# Tag.delete_all
+# User.delete_all
 
-# user2 = User.create!(
-#   first_name: "Jane", 
-#   last_name: "Smith", 
-#   email: "jane.smith2@example.com", 
-#   password: "password", 
-#   role: :contributor_user
-# )
-user1 = User.create!(first_name: "Alice", last_name: "Doe", email: "alice2@example.com", password: "password", role: "contributor_user")
-user2 = User.create!(first_name: "Bob", last_name: "Smith", email: "bob2@example.com", password: "password", role: "moderator_user")
-# Sample queries
-query1 = Query.create!(
-  title: "How to integrate Turbo Streams in Rails?", 
-  content: "I'm looking for a way to use Turbo Streams in my Rails app to dynamically update parts of the page.",
-  user: user1, 
-  flagged: false, 
-  status: true
-)
+# # Create users (without admin role)
+users = [
+  { first_name: "Alice", last_name: "Smith", email: "alice@example.com", password: "password", role: 0 },
+  { first_name: "Bob", last_name: "Johnson", email: "bob@example.com", password: "password", role: 1 },
+  { first_name: "Charlie", last_name: "Brown", email: "charlie@example.com", password: "password", role: 0 },
+  { first_name: "David", last_name: "Miller", email: "david@example.com", password: "password", role: 1 }
+]
 
-query2 = Query.create!(
-  title: "Best practices for database indexing in Rails", 
-  content: "Can anyone suggest the best indexing strategies to improve performance in a large-scale Rails app?",
-  user: user2, 
-  flagged: false, 
-  status: true
-)
+users.each { |user| User.create!(user) }
 
-query3 = Query.create!(
-  title: "Troubleshooting ActiveRecord associations", 
-  content: "I'm facing an issue with my ActiveRecord associations, and I need some guidance.",
-  user: user1, 
-  flagged: false, 
-  status: false
-)
+puts "✅ Created #{User.count} users."
 
-# Sample tags
-tag1 = Tag.create!(name: "Turbo")
-tag2 = Tag.create!(name: "Rails-Ruby")
-tag3 = Tag.create!(name: "Database Schema")
-tag4 = Tag.create!(name: "ActiveRecord & Storage")
+# Fetch users
+contributor = User.where(role: 0)
+moderator = User.where(role: 1)
 
-# Assigning tags to queries
-query1.tags << tag1
-query1.tags << tag2
-query2.tags << tag2
-query2.tags << tag3
-query3.tags << tag4
+# Create queries
+queries = [
+  { user: contributor.sample, title: "How to install Rails?", content: "Can someone help me install Rails?" },
+  { user: moderator.sample, title: "Best practices for REST APIs?", content: "What are the best practices to follow when designing a REST API?" },
+  { user: contributor.sample, title: "Understanding ActiveRecord?", content: "How does ActiveRecord handle associations?" }
+]
 
+queries.each { |query| Query.create!(query) }
 
+puts "✅ Created #{Query.count} queries."
 
+# Fetch queries
+query_records = Query.all
 
-# Create Responses (Each response inherits the tags of its associated query)
-response1 = Response.create!(
-  user: user2, 
-  query: query1, 
-  content: "You can use Devise and JWT for authentication.",
-  upvotes: 5,
-  downvotes: 0,
-  likes: 3,
-  approval: true
-)
-response1.tags << query1.tags  # Inherit tags from the query
+# Create responses
+responses = [
+  { user: moderator.sample, query: query_records.sample, content: "You can install Rails using `gem install rails`.", upvotes: 3, downvotes: 0, likes: 5, approval: true, flagged: false },
+  { user: contributor.sample, query: query_records.sample, content: "Make sure to follow REST principles like proper status codes and resource naming.", upvotes: 2, downvotes: 1, likes: 4, approval: false, flagged: false },
+  { user: contributor.sample, query: query_records.sample, content: "ActiveRecord handles associations using `belongs_to`, `has_many`, etc.", upvotes: 5, downvotes: 0, likes: 7, approval: true, flagged: false }
+]
 
-response2 = Response.create!(
-  user: user1, 
-  query: query2, 
-  content: "Use Bullet gem to detect N+1 queries and eager load associations.",
-  upvotes: 10,
-  downvotes: 1,
-  likes: 7,
-  approval: true
-)
-response2.tags << query2.tags  # Inherit tags from the query
+responses.each { |response| Response.create!(response) }
 
-# Create a response with additional selected tags
-response3 = Response.create!(
-  user: user2, 
-  query: query1, 
-  content: "You can also use Omniauth for social authentication.",
-  upvotes: 3,
-  downvotes: 0,
-  likes: 2,
-  approval: false
-)
-response3.tags << query1.tags  # Inherit tags from the query
-response3.tags << tag3  # Additional tag selected manually
+puts "✅ Created #{Response.count} responses."
+
+# Create tags
+tags = ["Ruby", "Rails", "API", "ActiveRecord", "Database", "Backend"]
+tags.each { |tag| Tag.create!(name: tag) }
+
+puts "✅ Created #{Tag.count} tags."
+
+# Associate queries with tags
+Query.all.each do |query|
+  query.tags << Tag.order("RANDOM()").limit(2)
+end
+
+# Associate responses with tags
+Response.all.each do |response|
+  response.tags << Tag.order("RANDOM()").limit(1)
+end
+
+puts "✅ Associated queries and responses with tags."
 

@@ -1,26 +1,29 @@
-<h1>Responses</h1>
+<div class="container mt-4">
+  <h1 class="mb-4 text-center text-primary fw-bold">Responses Dashboard</h1>
 
-<table class="table table-hover table-bordered shadow-sm">
-  <thead class="table-dark">
-    <tr>
-      <th>Content</th>
-      <th>Tags</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @responses.each do |response| %>
-      <tr>
-        <td><%= response.content %></td>
-        <td>
-          <% response.tags.each do |tag| %>
-            <span class="tag"><%= tag.name %></span>
-          <% end %>
-        </td>
-        <td>
-          <%= link_to 'Delete', response, method: :delete, data: { confirm: "Are you sure?" } %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <div class="card shadow-lg border-0">
+    <div class="card-body p-4">
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm align-middle">
+          <thead class="table-dark text-center">
+            <tr>
+              <th>User</th>
+              <th>Query</th>
+              <th>Content</th>
+              <th>Tags</th>
+              <th>Approval</th>
+              <th>Likes</th>
+              <th>Upvotes</th>
+              <th>Downvotes</th>
+              <th>Flagged</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="responses-table">
+            <%= render partial: 'responses/response', collection: @responses, as: :response %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

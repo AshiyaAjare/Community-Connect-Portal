@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   def authenticate_user!
     Rails.logger.debug "Checking authentication..."
     
-    if request.format.html?
+    if request.format.html? || request.format.turbo_stream?
       # For web requests, redirect to sign-in if the user is not authenticated
       unless user_signed_in?
         Rails.logger.debug "Redirecting to sign-in..."

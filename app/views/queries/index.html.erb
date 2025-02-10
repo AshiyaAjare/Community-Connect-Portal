@@ -14,11 +14,7 @@
       </tr>
     </thead>
     <tbody id="query_table_body">
-      <% @queries.each do |query| %>
-        <%= turbo_frame_tag "query_#{query.id}" do %>
-          <%= render partial: 'queries/query_row', locals: { query: query } %>
-        <% end %>
-      <% end %>
+      <%= render partial: 'queries/query', collection: @queries, as: :query %>  
     </tbody>
   </table>
 </div>

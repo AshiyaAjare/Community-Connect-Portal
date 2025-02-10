@@ -55,22 +55,22 @@ class QueriesController < ApplicationController
 
     # PATCH /queries/:id/status
     def update_status
-        @query = Query.find(params[:id])
-
-        if current_user.admin_user?
-            @query.update(status: !@query.status)
-            flash.now[:notice] = "Query status updated successfully."
-        else
-            flash.now[:alert] = "You are not authorized to perform this action."
+      @query = Query.find(params[:id])
+      @query.update(status: !@query.status)
+    
+      respond_to do |format|
+        format.html { redirect_to queries_path, notice: "Query status updated." }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("query-#{@query.id}", 
+            partial: "queries/query", 
+            locals: { query: @query })
         end
-
-        respond_to do |format|
-          format.turbo_stream { render turbo_stream: turbo_stream.replace("query_#{@query.id}", partial: 'queries/query_row', locals: { query: @query }) }
-          format.html { redirect_to queries_path }
-        end 
+      end
     end
+    
 
-        # PATCH /queries/:id/flag
+    # PATCH /queries/:id/flag
+    # reference - https://stackoverflow.com/questions/75751032/rails-7-turbo-stream-turbo-frame-render-index-with-new-item
     def update_flag
         @query = Query.find(params[:id])
 
@@ -82,8 +82,12 @@ class QueriesController < ApplicationController
         end
 
         respond_to do |format|
-            format.turbo_stream { render turbo_stream: turbo_stream.replace("query_#{@query.id}", partial: 'queries/query_row', locals: { query: @query }) }
             format.html { redirect_to queries_path }
+            # format.turbo_stream { render turbo_stream: turbo_stream.replace("query_#{@query.id}", partial: 'queries/query_row', locals: { query: @query }) }
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.replace("query-#{@query.id}", partial: 'queries/query', locals: { query: @query })
+            end
+            
         end
     end
     

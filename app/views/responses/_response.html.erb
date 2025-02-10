@@ -1,0 +1,82 @@
+<tr id="response-<%= response.id %>" class="text-center">
+  <!-- User -->
+  <td><strong><%= response.user.first_name %> <%= response.user.last_name %></strong></td>
+
+  <!-- Query -->
+  <td class="text-info fw-semibold"><%= response.query.title %></td>
+
+  <!-- Content -->
+  <td class="text-muted"><%= truncate(response.content, length: 50) %></td>
+
+  <!-- Tags -->
+  <td>
+    <% all_tags = (response.tags + response.query.tags).uniq %>
+    <% all_tags.each do |tag| %>
+      <span class="badge bg-primary p-2 m-1"><%= tag.name %></span>
+    <% end %>
+  </td>
+
+  <!-- Approval Status -->
+  <td>
+    <% if current_user.admin_user? %>
+      <%= button_to (response.approval ? "Pending" : "Approved"),
+        toggle_approval_response_path(response),
+        method: :patch,
+        data: { turbo_confirm: "Are you sure you want to change the status?" },
+        class: "btn btn-sm #{response.approval ? 'btn-danger' : 'btn-success'} shadow-sm fw-semibold" %>
+    <% else %>
+      <span class="badge <%= response.approval ? 'bg-success' : 'bg-danger' %> p-2">
+        <%= response.approval ? "Approved" : "Pending" %>
+      </span>
+    <% end %>
+  </td>
+
+  <!-- Likes -->
+  <td>
+    <span class="badge bg-light text-dark p-2"><%= response.likes %></span>
+    <%= button_to '👍', like_response_path(response),
+      method: :patch,
+      data: { turbo_confirm: "Like this response?" },
+      class: "btn btn-outline-success btn-sm shadow-sm ms-2" %>
+  </td>
+
+  <!-- Upvotes -->
+  <td>
+    <span class="badge bg-light text-dark p-2"><%= response.upvotes %></span>
+    <%= button_to '⬆️', upvote_response_path(response),
+      method: :patch,
+      data: { turbo_confirm: "Upvote this response?" },
+      class: "btn btn-outline-primary btn-sm shadow-sm ms-2" %>
+  </td>
+
+  <!-- Downvotes -->
+  <td>
+    <span class="badge bg-light text-dark p-2"><%= response.downvotes %></span>
+    <%= button_to '⬇️', downvote_response_path(response),
+      method: :patch,
+      data: { turbo_confirm: "Downvote this response?" },
+      class: "btn btn-outline-warning btn-sm shadow-sm ms-2" %>
+  </td>
+
+  <!-- Flagged -->
+  <td>
+    <% if current_user.admin_user? %>
+      <%= button_to (response.flagged ? "🚩 Flagged" : "🚩 Flag"),
+        toggle_flag_response_path(response),
+        method: :patch,
+        data: { turbo_confirm: "Are you sure you want to flag this response?" },
+        class: "btn btn-outline-sm #{response.flagged ? 'btn-warning' : 'btn-danger'} shadow-sm fw-semibold" %>
+    <% else %>
+      <span class="badge <%= response.flagged ? 'bg-warning' : 'bg-danger' %> p-2">
+        <%= response.flagged ? "Flagged" : "Flag" %>
+      </span>
+    <% end %>
+  </td>
+
+  <!-- Actions -->
+  <td>
+    <%= button_to '🗑 Delete', response, method: :delete,
+      data: { turbo_confirm: "Are you sure you want to delete this response?" },
+      class: "btn btn-outline-danger btn-sm shadow-sm fw-semibold" %>
+  </td>
+</tr>
