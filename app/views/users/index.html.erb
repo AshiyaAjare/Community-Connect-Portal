@@ -25,4 +25,9 @@
       </table>
     </div>
   </turbo-frame>
+  <%= will_paginate @responses, 
+  class: 'pagination justify-content-center', 
+  previous_label: '<span aria-hidden="true">&laquo;</span>'.html_safe, 
+  next_label: '<span aria-hidden="true">&raquo;</span>'.html_safe 
+  %>
 </div>

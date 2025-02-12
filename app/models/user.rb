@@ -20,12 +20,13 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 6 }
 
-  def profile_image_url
-      if profile_image.attached?
-        Rails.application.routes.url_helpers.rails_blob_url(profile_image, only_path: true)
-      else
-        'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon'
-      end
+  def display_profile_image_url
+    if profile_image.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(profile_image, only_path: true)
+    else
+      profile_image_url.presence || 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon'
+    end
   end
+  
 
 end

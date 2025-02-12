@@ -3,7 +3,11 @@ class QueriesController < ApplicationController
   
     # GET /queries
     def index
-      @queries = Query.includes(:tags, :responses).all
+      if params[:search].present?
+        @queries = Query.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
+      else
+        @queries = Query.includes(:tags, :responses).all
+      end
     end
   
     # GET /queries/1
@@ -37,21 +41,35 @@ class QueriesController < ApplicationController
     end
   
     # PATCH/PUT /queries/1
+    # PATCH/PUT /queries/1
     def update
-        # @query = Query.find(params[:id])
+      if current_user.admin_user?
+        update_admin_fields
+      end
 
-        # # Allow only admins to change status and flag
-        # if current_user.admin_user?
-        #   @query.update(status: params[:query][:status], flagged: params[:query][:flagged])
-        # else
-        #   flash[:alert] = "You are not authorized to perform this action."
-        # end
-      
-        # respond_to do |format|
-        #   format.html { redirect_to queries_path, notice: 'Query updated successfully.' }
-        #   format.turbo_stream
-        # end
+      if @query.update(query_params)
+        add_tags_to_query
+        respond_to do |format|
+          format.html { redirect_to @query, notice: 'Query was successfully updated.' }
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace("query-#{@query.id}", 
+              partial: "queries/query", 
+              locals: { query: @query })
+          end
+        end
+      else
+        respond_to do |format|
+          format.html { render :edit, status: :unprocessable_entity }
+          format.turbo_stream do
+            flash.now[:alert] = "Failed to update query."
+            render turbo_stream: turbo_stream.replace("query-form", 
+              partial: "queries/form", 
+              locals: { query: @query })
+          end
+        end
+      end
     end
+
 
     # PATCH /queries/:id/status
     def update_status
@@ -110,6 +128,13 @@ class QueriesController < ApplicationController
         end
       end
     end
+
+    def restore
+      @query = Query.find(params[:id])
+      @query.update(discarded_at: nil)
+      redirect_to moderation_logs_path, notice: "Query restored successfully."
+    end
+
   
     private
       def set_query

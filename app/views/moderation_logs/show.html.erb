@@ -1,0 +1,67 @@
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+      <h3>Moderation Log Details</h3>
+    </div>
+    <div class="card-body">
+      <p><strong>Action Taken:</strong> <%= @moderation_log.action %></p>
+      <p><strong>Time:</strong> <%= @moderation_log.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
+
+      <% if @moderation_log.query_id.present? %>
+        <div class="card mt-3">
+          <div class="card-header bg-primary text-white">
+            <h5>Query Details</h5>
+          </div>
+          <div class="card-body">
+            <p><strong>Title:</strong> <%= @query.title %></p>
+            <p><strong>Content:</strong> <%= @query.content %></p>
+            <p><strong>Status:</strong> <%= @query.status ? 'Closed' : 'Open' %></p>
+            <p><strong>Tags:</strong>
+              <% @query.tags.each do |tag| %>
+                <span class="badge bg-info"><%= tag.name %></span>
+              <% end %>
+            </p>
+            <p><strong>Created At:</strong> <%= @query.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
+            <p><strong>Updated At:</strong> <%= @query.updated_at.strftime("%B %d, %Y %I:%M %p") %></p>
+          </div>
+        </div>
+
+        <div class="card mt-3">
+          <div class="card-header bg-success text-white">
+            <h5>Responses</h5>
+          </div>
+          <div class="card-body">
+            <% if @query.responses.any? %>
+              <% @query.responses.each do |response| %>
+                <div class="border p-3 mb-2">
+                  <p><strong>Response:</strong> <%= response.content %></p>
+                  <p><strong>Upvotes:</strong> <%= response.upvotes %>, <strong>Downvotes:</strong> <%= response.downvotes %>, <strong>Likes:</strong> <%= response.likes %></p>
+                  <p><strong>Approval:</strong> <%= response.approval ? 'Approved' : 'Not Approved' %></p>
+                  <p><strong>Created At:</strong> <%= response.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
+                  <p><strong>Updated At:</strong> <%= response.updated_at.strftime("%B %d, %Y %I:%M %p") %></p>
+                </div>
+              <% end %>
+            <% else %>
+              <p>No responses available.</p>
+            <% end %>
+          </div>
+        </div>
+      
+      <% elsif @moderation_log.response_id.present? %>
+        <div class="card mt-3">
+          <div class="card-header bg-secondary text-white">
+            <h5>Response Details</h5>
+          </div>
+          <div class="card-body">
+            <p><strong>Response:</strong> <%= @response.content %></p>
+            <p><strong>Upvotes:</strong> <%= @response.upvotes %>, <strong>Downvotes:</strong> <%= @response.downvotes %>, <strong>Likes:</strong> <%= @response.likes %></p>
+            <p><strong>Approval:</strong> <%= @response.approval ? 'Approved' : 'Not Approved' %></p>
+            <p><strong>Created At:</strong> <%= @response.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
+            <p><strong>Updated At:</strong> <%= @response.updated_at.strftime("%B %d, %Y %I:%M %p") %></p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <button
+  </div>
+</div>

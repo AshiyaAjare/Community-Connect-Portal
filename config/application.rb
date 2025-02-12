@@ -1,7 +1,9 @@
 require_relative "boot"
 
 require "rails/all"
-
+require 'will_paginate'
+require 'will_paginate/active_record'
+require 'will_paginate-bootstrap'
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)

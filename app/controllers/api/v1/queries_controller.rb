@@ -1,72 +1,108 @@
-class Api::V1::QueriesController < ApplicationController
-    
-    #before_action :authenticate_user! # Ensures only authenticated users can access
-    # skip_before_action :authenticate_user!, only: [:index, :show]
-    before_action :set_query, only: [:show, :update, :destroy]
-    
-    # GET /api/queries
-    def index
-        queries = Query.includes(:tags, :responses).all
-        render json: queries.as_json(include: { 
-        tags: { only: [:id, :name] }, 
-        responses: { only: [:id, :content] }
-        })
-    end
-    
-    # GET /api/queries/:id
-    def show
-        render json: @query.as_json(include: { 
-        tags: { only: [:id, :name] }, 
-        responses: { only: [:id, :content] }
-        })
-    end
-    
-    # POST /api/queries
-    def create
-        query = current_user.queries.new(query_params)
-        
-        if query.save
-        # Attach existing tags or create a new tag
-        if params[:tag_ids]
-            query.tags << Tag.where(id: params[:tag_ids])
+module Api
+    module V1
+      class QueriesController < ApplicationController
+        before_action :set_query, only: %i[show update destroy update_status update_flag]
+        before_action :authenticate_user! # Ensure API authentication
+  
+        # GET /api/v1/queries
+        def index
+          @queries = if params[:search].present?
+                       Query.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
+                     else
+                       Query.includes(:tags, :responses).all
+                     end
+          render json: @queries, include: [:tags, :responses], status: :ok
         end
-        if params[:new_tag].present?
-            new_tag = Tag.create(name: params[:new_tag])
-            query.tags << new_tag if new_tag.persisted?
+  
+        # GET /api/v1/queries/:id
+        def show
+          render json: @query, include: [:tags, :responses], status: :ok
         end
-    
-        render json: query.as_json(include: { tags: { only: [:id, :name] } }), status: :created
-        else
-        render json: { errors: query.errors.full_messages }, status: :unprocessable_entity
+  
+        # POST /api/v1/queries
+        def create
+          @query = Query.new(query_params)
+  
+          if @query.save
+            add_tags_to_query
+            render json: @query, status: :created
+          else
+            render json: { errors: @query.errors.full_messages }, status: :unprocessable_entity
+          end
         end
-    end
-    
-    # PUT /api/queries/:id
-    def update
-        if @query.update(query_params)
-        render json: @query.as_json(include: { tags: { only: [:id, :name] } })
-        else
-        render json: { errors: @query.errors.full_messages }, status: :unprocessable_entity
+  
+        # PATCH/PUT /api/v1/queries/:id
+        def update
+          if current_user.admin_user?
+            @query.assign_attributes(status: params[:query][:status], flagged: params[:query][:flagged])
+          end
+  
+          if @query.update(query_params)
+            add_tags_to_query
+            render json: @query, status: :ok
+          else
+            render json: { errors: @query.errors.full_messages }, status: :unprocessable_entity
+          end
         end
+  
+        # PATCH /api/v1/queries/:id/status
+        def update_status
+          if current_user.admin_user?
+            @query.update(status: !@query.status)
+            render json: { message: "Query status updated", query: @query }, status: :ok
+          else
+            render json: { error: "Not authorized" }, status: :forbidden
+          end
+        end
+  
+        # PATCH /api/v1/queries/:id/flag
+        def update_flag
+          if current_user.admin_user?
+            @query.update(flagged: !@query.flagged)
+            log_flag_status if @query.flagged?
+            render json: { message: "Query flag status updated", query: @query }, status: :ok
+          else
+            render json: { error: "Not authorized" }, status: :forbidden
+          end
+        end
+  
+        # DELETE /api/v1/queries/:id
+        def destroy
+          @query.discard
+          ModerationLog.find_or_initialize_by(query_id: @query.id, action: :soft_delete).update(updated_at: Time.current)
+          render json: { message: "Query deleted successfully" }, status: :ok
+        end
+  
+        # POST /api/v1/queries/:id/restore
+        def restore
+          @query.update(discarded_at: nil)
+          render json: { message: "Query restored successfully" }, status: :ok
+        end
+  
+        private
+  
+        def set_query
+          @query = Query.find(params[:id])
+        rescue ActiveRecord::RecordNotFound
+          render json: { error: "Query not found" }, status: :not_found
+        end
+  
+        def query_params
+          params.require(:query).permit(:title, :content, :user_id, tag_ids: [], new_tag: {})
+        end
+  
+        def add_tags_to_query
+          @query.tag_ids = params[:query][:tag_ids] if params[:query][:tag_ids].present?
+          if params[:query][:new_tag].present? && params[:query][:new_tag].strip != ""
+            new_tag = Tag.create(name: params[:query][:new_tag])
+            @query.tags << new_tag
+          end
+        end
+  
+        def log_flag_status
+          ModerationLog.find_or_initialize_by(query_id: @query.id, action: :flag).update(updated_at: Time.current)
+        end
+      end
     end
-    
-    # DELETE /api/queries/:id
-    def destroy
-        @query.destroy
-        render json: { message: "Query deleted successfully" }, status: :ok
-    end
-    
-    private
-    
-    def set_query
-        @query = Query.find(params[:id])
-    rescue ActiveRecord::RecordNotFound
-        render json: { error: "Query not found" }, status: :not_found
-    end
-    
-    def query_params
-        params.require(:query).permit(:title, :content, tag_ids: [])
-    end
-    
-      
-end
+  end
+  

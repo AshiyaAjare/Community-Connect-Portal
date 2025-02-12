@@ -57,7 +57,7 @@
       <div class="ms-auto user-info">
         <% if user_signed_in? %>
           <li class="nav-item d-flex align-items-center gap-3">
-            <%= image_tag(current_user.profile_image_url, class: "rounded-circle", width: 35, height: 35) %>
+            <%= image_tag(current_user.display_profile_image_url, class: "rounded-circle", width: 35, height: 35) %>
             <span class="text-white"><%= current_user.first_name %> <%= current_user.last_name %>: <%= current_user.email %> </span>
           </li>
         <% else %>
@@ -87,6 +87,9 @@
             </li>
             <li class="nav-item">
               <%= link_to "View Responses", responses_path, class: "nav-link" %>
+            </li>
+            <li class="nav-item">
+              <%= link_to "Moderation Logs", moderation_logs_path, class: "nav-link" %>
             </li>
             <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'btn btn-danger' %>
           </ul>

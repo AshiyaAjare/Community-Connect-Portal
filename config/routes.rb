@@ -19,6 +19,11 @@ Rails.application.routes.draw do
       resources :queries do
         resources :responses, only: [:create]  
       end
+      resources :moderation_logs do
+        # patch "/restore_query/:id", to: "queries#restore", as: :restore_query
+        # patch "/restore_response/:id", to: "responses#restore", as: :restore_response
+        post :restore, on: :member
+      end
     end
     resources :responses, only: [:index, :show, :edit, :destroy]
   end
@@ -53,7 +58,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :moderation_logs
+  resources :moderation_logs, only: [:index, :show] do
+    patch "/restore_query/:id", to: "queries#restore", as: :restore_query
+    patch "/restore_response/:id", to: "responses#restore", as: :restore_response
+    patch :restore, on: :member
+  end
+
   
   #post '/auth/login', to: 'authentication#login'
 

@@ -5,7 +5,8 @@ class ResponsesController < ApplicationController
   
     # GET /responses
     def index
-      @responses = Response.includes(:user, :query, :tags).kept
+      
+      @responses = Response.includes(:user, :query, :tags).kept.paginate(page: params[:page], per_page: 6)
     end
   
     # PATCH /responses/:id/upvote
@@ -99,6 +100,13 @@ class ResponsesController < ApplicationController
         end
       end
     end
+
+    def restore
+      @response = Response.find(params[:id])
+      @response.update(discarded_at: nil)
+      redirect_to moderation_logs_path, notice: "Response restored successfully."
+    end
+    
   
     private
   

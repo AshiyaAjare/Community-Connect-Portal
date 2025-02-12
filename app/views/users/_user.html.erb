@@ -2,7 +2,7 @@
 <% if !user.admin_user? %>
 <tr id="user_<%= user.id %>">
   <td>
-    <%= image_tag(current_user.profile_image_url, class: "rounded-circle", width: 50, height: 50) %>
+    <%= image_tag(current_user.display_profile_image_url, class: "rounded-circle", width: 50, height: 50) %>
   </td>
 
   <td><%= user.first_name %> <%= user.last_name %></td>
