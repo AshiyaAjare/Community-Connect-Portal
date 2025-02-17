@@ -13,9 +13,15 @@ module CommunityConnectExp
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
 
+    #setting up the default locale
+    config.i18n.default_locale = :en
+    config.i18n.available_locales = [:en, :es]
+    config.i18n.raise_on_missing_translations = true
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
+    
     config.autoload_lib(ignore: %w[assets tasks])
     config.action_dispatch.rescue_responses["Turbo::Streams::HTMLRequest"] = :not_acceptable
 

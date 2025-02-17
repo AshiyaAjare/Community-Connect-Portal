@@ -28,4 +28,11 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  api:
+    success:
+      fetched: "%{resource} successfully fetched"
+      created: "%{resource} was successfully created"
+    errors:
+      not_found: "Record not found"
+      invalid_data: "Invalid input data"
+      unauthorized: "Unauthorized"

@@ -1,8 +1,8 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+  devise :invitable, :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable, :invitable
 
   require "securerandom"
     
@@ -26,6 +26,14 @@ class User < ApplicationRecord
     else
       profile_image_url.presence || 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon'
     end
+  end
+
+  before_invitation_created :set_default_role
+
+  private
+
+  def set_default_role
+    self.role ||= :contributor_user
   end
   
 

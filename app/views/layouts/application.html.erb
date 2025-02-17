@@ -24,41 +24,98 @@
     
     <style>
       body {
-        background-color: #f4f7fc;
+        background-color: #e3f2fd; /* Light yellow background */
       }
       .navbar {
-        background-color: #2f4f4f !important;
+        background-color: #a6a6a6; /* Light blue navbar */
+        height: 60px;
       }
       .sidebar {
-        background-color: #2f4f4f;
-        color: white;
+        background-color: #a6a6a6; /* Matching navbar color */
+        width: 0; /* Start hidden */
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        overflow: hidden; /* Hide contents when collapsed */
+        transition: width 0.3s ease-in-out;
+        white-space: nowrap; /* Prevent text wrapping */
       }
+
+      .sidebar.show {
+        width: 250px; /* Expand when shown */
+        padding: 20px; /* Restore padding when visible */
+      }
+
       .sidebar .nav-link {
-        color: #d1d5db;
+        background-color: #f8f9fa;
+        color: black;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        text-align: center;
       }
       .sidebar .nav-link:hover {
-        color: white;
+        background-color: #e9ecef;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+      }
+      .content {
+        width: calc(100% - 250px);
+        margin: 0 auto;
+        transition: width 0.3s;
+        padding: 20px;
+      }
+      .content.full-width {
+        width: 100%;
+      }
+      .toggle-btn {
+        cursor: pointer;
+        font-size: 24px;
+        margin-left: 10px;
+        color: black;
+        display: block;
+        z-index:2;
       }
       .user-info {
         display: flex;
         align-items: center;
         gap: 10px;
       }
-      .card {
-        border: none;
-        border-radius: 8px;
+      /* Flash messages */
+      .flash-messages {
+        position: fixed;
+        top: 10px; 
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1050; 
+        width: auto;
+        max-width: 80%;
+        padding: 10px 20px;
+        border-radius: 5px;
       }
+
     </style>
+
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark px-3">
-      <a class="navbar-brand" href="#">Admin Panel</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg px-3">
+      <span id="toggle-btn" class="toggle-btn" onclick="toggleSidebar()">☰</span>
+      <span class="fw-bold fs-3 ms-2">LinkUp</span>
       <div class="ms-auto user-info">
         <% if user_signed_in? %>
-          <li class="nav-item d-flex align-items-center gap-3">
-            <%= image_tag(current_user.display_profile_image_url, class: "rounded-circle", width: 35, height: 35) %>
-            <span class="text-white"><%= current_user.first_name %> <%= current_user.last_name %>: <%= current_user.email %> </span>
+          <li class="nav-item d-flex align-items-center gap-2">
+            <%= image_tag(current_user.display_profile_image_url, class: "rounded-circle border", width: 40, height: 40) %>
+            <div class="text-dark fw-bold">
+              <%= current_user.first_name %> <%= current_user.last_name %><br>
+              <span class="small text-muted"><%= current_user.email %></span>
+            </div>
           </li>
         <% else %>
           <%= link_to "Log In", new_user_session_path, class: "btn btn-success" %>
@@ -68,40 +125,64 @@
 
     <div class="d-flex">
       <!-- Sidebar -->
-      <nav class="sidebar vh-100 p-3" style="width: 250px;">
+      <nav id="sidebar" class="sidebar p-3">
         <h4 class="text-center">Dashboard</h4>
         <hr>
         <% if user_signed_in? %>
           <ul class="nav flex-column">
             <li class="nav-item">
-              <%= link_to "Users List", users_path, class: "nav-link" %>
+              <%= link_to "Users", users_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
-              <%= link_to "Add User", new_user_path, class: "nav-link" %>
+              <%= link_to "Queries", queries_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
-              <%= link_to "View Tags", tags_path, class: "nav-link" %>
-            </li>
-            <li class="nav-item">
-              <%= link_to "View Queries", queries_path, class: "nav-link" %>
-            </li>
-            <li class="nav-item">
-              <%= link_to "View Responses", responses_path, class: "nav-link" %>
+              <%= link_to "Responses", responses_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
               <%= link_to "Moderation Logs", moderation_logs_path, class: "nav-link" %>
             </li>
-            <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'btn btn-danger' %>
           </ul>
+
+          <!-- Log Out Button at Bottom -->
+          <div class="logout-container">
+            <%= form_with url: destroy_user_session_path, method: :delete, local: true do %>
+              <%= submit_tag "Log Out", class: "btn btn-danger logout-btn" %>
+            <% end %>
+          </div>
+
         <% else %>
           <p class="text-center">Please log in</p>
         <% end %>
       </nav>
 
+
       <!-- Main Content -->
-      <div class="flex-grow-1 p-4">
+      <div class="flash-messages position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1100;">
+        <% flash.each do |type, message| %>
+          <div class="alert alert-<%= type == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+            <%= message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+      </div>
+
+      <div id="content" class="content">
         <%= yield %> <!-- Page Content -->
       </div>
     </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let sidebar = document.querySelector(".sidebar");
+      sidebar.classList.remove("show"); // Ensure it's hidden on page load
+    });
+
+    function toggleSidebar() {
+      let sidebar = document.querySelector(".sidebar");
+      sidebar.classList.toggle("show"); // Toggle visibility
+    }
+
+    </script>
   </body>
 </html>

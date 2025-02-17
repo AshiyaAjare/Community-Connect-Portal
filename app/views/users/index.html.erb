@@ -17,6 +17,7 @@
             <th>Email</th>
             <th>Role</th>
             <th>Actions</th>
+            <th>Invited</th>
           </tr>
         </thead>
         <tbody id="users_table_body">
@@ -24,6 +25,11 @@
         </tbody>
       </table>
     </div>
+     <% if current_user.admin_user? %>
+       
+       <%= link_to "Invite New User", new_user_invitation_path, class: "btn btn-primary" %>
+    <% end %>
+
   </turbo-frame>
   <%= will_paginate @responses, 
   class: 'pagination justify-content-center', 

@@ -15,6 +15,7 @@
       <%= button_to "Delete", user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", form: { onsubmit: "return confirm('Are you sure?');" } %>
     </div>
   </td>
+  <td><%= user.invitation_sent_at ? user.invitation_sent_at.strftime("%B %d, %Y") : "Not Invited" %></td>
 </tr>
 
 <% end %>
