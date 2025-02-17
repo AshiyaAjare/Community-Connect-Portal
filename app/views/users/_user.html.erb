@@ -15,8 +15,14 @@
       <%= button_to "Delete", user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", form: { onsubmit: "return confirm('Are you sure?');" } %>
     </div>
   </td>
-  <td><%= user.invitation_sent_at ? user.invitation_sent_at.strftime("%B %d, %Y") : "Not Invited" %></td>
+  <td>
+    <% if !user.invitation_sent_at && current_user.admin_user? %>
+      <%= button_to "Invite New User", invite_user_path(user), 
+            method: :post, remote: true, data: {turbo: false}, class: "btn btn-primary", 
+            id: "invite-user-#{user.id}" %>
+      <% end %>
+
+  </td>
 </tr>
 
 <% end %>
- 

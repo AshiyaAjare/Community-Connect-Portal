@@ -13,6 +13,28 @@ class UsersController < ApplicationController
     def new
       @user = User.new
     end
+
+    def invite
+      user = User.find(params[:id])
+      
+      if current_user.admin_user?
+        if user.invitation_sent_at.nil?
+          user.invite! 
+          respond_to do |format|
+            format.js 
+            format.html { redirect_to users_path, notice: "User invited" }
+          end
+        else
+          flash[:notice] = "User already invited"
+          #render json: { error: "User already invited" }, status: :unprocessable_entity
+        end
+      else
+        Rails.logger.debug "Role: #{user.role}"
+        redirect_to users_path, alert: "Only admin users can invite other users"
+      end
+
+    end
+  
     
     def create
       params[:user][:role] = params[:user][:role].to_i if params[:user][:role].present?

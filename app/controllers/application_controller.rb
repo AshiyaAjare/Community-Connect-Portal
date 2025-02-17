@@ -23,8 +23,8 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def authenticate_user(*args)!
-    byebug
+  def authenticate_user!
+    #byebug
     Rails.logger.debug "Checking authentication..."
     
     if request.format.html? || request.format.turbo_stream?

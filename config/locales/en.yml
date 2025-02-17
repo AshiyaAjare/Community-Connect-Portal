@@ -35,4 +35,4 @@ en:
     errors:
       not_found: "Record not found"
       invalid_data: "Invalid input data"
-      unauthorized: "Unauthorized"
+      unauthorized: "Unauthorized"            

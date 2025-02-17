@@ -39,7 +39,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root to: "users#index"
 
-  resources :users
+  resources :users do
+    post :invite, on: :member
+  end
   resources :tags
   resources :queries do
     member do
