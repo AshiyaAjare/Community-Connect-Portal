@@ -1,5 +1,5 @@
 class Api::V1::TagsController < ApplicationController
-    skip_before_action :authenticate_user!, only: [:index, :show]
+    # skip_before_action :authenticate_user!, only: [:index, :show]
     before_action :set_tag, only: [:show, :update, :destroy]
 
     # GET /api/tags

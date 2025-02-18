@@ -18,30 +18,47 @@ class ApplicationController < ActionController::Base
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :role])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :email, :password, :role, :profile_image])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name, :email, :password, :current_password, :role, :profile_image])
   end
 
 
   def authenticate_user!
+
     Rails.logger.debug "Checking authentication..."
     
-    if request.format.html?
+    if request.format.html? || request.format.turbo_stream?
       # For web requests, redirect to sign-in if the user is not authenticated
       unless user_signed_in?
         Rails.logger.debug "Redirecting to sign-in..."
         redirect_to new_user_session_path and return
       end
+
     else
       # For API requests, return JSON unauthorized error instead of redirecting
-      unless user_signed_in?
-        render json: { error: "You need to sign in or sign up before continuing." }, status: :unauthorized
+      header = request.headers['Authorization']
+      token = header.split(' ').last if header
+    
+      if token.blank?
+        render json: { error: 'Token missing' }, status: :unauthorized and return
       end
+    
+      decoded_token = JsonWebToken.decode(token)
+    
+      if decoded_token.nil? || decoded_token[:user_id].nil?
+        render json: { error: 'Invalid token' }, status: :unauthorized and return
+      end
+    
+      @current_user = User.find_by(id: decoded_token[:user_id])
+    
+      render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
     end
+    
   end
 
-  def after_sign_out_path_for(_resource_or_scope)
-    new_user_session_path
+  def after_sign_up_path_for(resource)
+    sign_out resource # Ensure the newly created user is logged out immediately
+    users_path # Redirect to the users list or any other admin page
   end
   
 

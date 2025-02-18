@@ -1,7 +1,9 @@
 require_relative "boot"
 
 require "rails/all"
-
+require 'will_paginate'
+require 'will_paginate/active_record'
+require 'will_paginate-bootstrap'
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -15,6 +17,8 @@ module CommunityConnectExp
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+    config.action_dispatch.rescue_responses["Turbo::Streams::HTMLRequest"] = :not_acceptable
+
 
     # Configuration for the application, engines, and railties goes here.
     #

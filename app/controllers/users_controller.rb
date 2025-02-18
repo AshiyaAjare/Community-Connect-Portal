@@ -3,7 +3,7 @@ class UsersController < ApplicationController
     before_action :set_user, only: [:edit, :update, :show, :destroy]
 
     def index
-        @users = User.kept
+        @users = User.kept.paginate(page: params[:page], per_page: 6)
     end
 
     def show
@@ -20,13 +20,20 @@ class UsersController < ApplicationController
       @user = User.new(user_params)
       
       if @user.save
-        if @user.profile_image.attached?
-          @user.profile_image_url = url_for(@user.profile_image)
+        sign_out @user
+        if params[:user][:profile_image].present?
+          @user.profile_image.attach(params[:user][:profile_image])
+          if @user.profile_image.attached?
+            @user.profile_image_url = url_for(@user.profile_image) 
+          else
+            Rails.logger.debug "Image not attached successfully!"
+          end
         else
-          @user.profile_image_url = url_for('assets/images/default_image.png')
-        end
+          @user.profile_image_url = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon'
+        end                
         @user.save
         flash[:notice] = "User created successfully"
+        
         respond_to do |format|
           format.html { redirect_to users_path, notice: "User created" }
           format.turbo_stream # This will look for create.turbo_stream.erb
