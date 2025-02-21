@@ -10,18 +10,28 @@
   <td><%= user.role.capitalize %></td>
   <td>
     <div class="d-flex justify-content-between">
-      <%= link_to "View", user_path(user), class: "btn btn-info" %>
+      <%= link_to "View", user_path(user), class: "btn btn-info mr-2" %>
       <%# <%= link_to "Edit", edit_user_path(user), class: "btn btn-primary" %>  
       <%= button_to "Delete", user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", form: { onsubmit: "return confirm('Are you sure?');" } %>
     </div>
   </td>
   <td>
     <% if !user.invitation_sent_at && current_user.admin_user? %>
-      <%= button_to "Invite New User", invite_user_path(user), 
+      <%= button_to "Invite", invite_user_path(user), 
             method: :post, remote: true, data: {turbo: false}, class: "btn btn-primary", 
             id: "invite-user-#{user.id}" %>
+    <% else %>
+      <h8>Invitation sent at: <%= user.invitation_sent_at %></h8>
+    <% end %>
+  </td>
+  <td>
+  <% if !user.invitation_accepted_at && current_user.admin_user? %>
+        <%= button_to "Resend Invitation", invite_user_path(user), 
+              method: :post, remote: true, data: {turbo: false}, class: "btn btn-outline-success", 
+              id: "invite-user-#{user.id}" %>
+      <%else%>
+        <h8>Invitation accepted at: <%= user.invitation_accepted_at %></h8>
       <% end %>
-
   </td>
 </tr>
 

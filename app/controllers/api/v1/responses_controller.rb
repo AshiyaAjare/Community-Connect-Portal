@@ -7,18 +7,18 @@ class Api::V1::ResponsesController < ApplicationController
   # GET /api/v1/responses
   def index
     responses = Response.includes(:tags, :query).kept
-    render json: responses.as_json(include: {
-      tags: { only: [:id, :name] },
-      query: { only: [:id, :title] }
-    })
+    render json: { 
+      message: I18n.t('api.success.fetched', resource: 'Responses'),
+      responses: responses.as_json(include: { tags: { only: [:id, :name] }, query: { only: [:id, :title] } })
+    }
   end
 
   # GET /api/v1/responses/:id
   def show
-    render json: @response.as_json(include: {
-      tags: { only: [:id, :name] },
-      query: { only: [:id, :title, :content] }
-    })
+    render json: { 
+      message: I18n.t('api.success.fetched', resource: 'Response'),
+      response: @response.as_json(include: { tags: { only: [:id, :name] }, query: { only: [:id, :title, :content] } })
+    }
   end
 
   # POST /api/v1/queries/:query_id/responses
@@ -27,10 +27,8 @@ class Api::V1::ResponsesController < ApplicationController
     response.query = @query
 
     if response.save
-      response.tags << @query.tags # Attach all existing tags from query
-
-      # Attach selected tags
-      response.tags << Tag.where(id: params[:tag_ids]) if params[:tag_ids]
+      response.tags << @query.tags # Attach existing query tags
+      response.tags << Tag.where(id: params[:tag_ids]) if params[:tag_ids] # Attach selected tags
 
       # Create and attach a new tag if provided
       if params[:new_tag].present?
@@ -38,42 +36,46 @@ class Api::V1::ResponsesController < ApplicationController
         response.tags << new_tag if new_tag.persisted?
       end
 
-      render json: response.as_json(include: { tags: { only: [:id, :name] } }), status: :created
+      render json: { 
+        message: I18n.t('api.success.created', resource: 'Response'),
+        response: response.as_json(include: { tags: { only: [:id, :name] } })
+      }, status: :created
     else
-      render json: { errors: response.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: I18n.t('api.errors.invalid_data'), errors: response.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   # PUT /api/v1/responses/:id
   def update
-    # Allow users to update only content and tags, while approval and flagged are admin-controlled
     permitted_params = response_params
     permitted_params.except!(:approval, :flagged, :likes, :upvotes, :downvotes) unless current_user.admin_user?
 
     if @response.update(permitted_params)
-      render json: { message: "Response updated successfully", response: @response.as_json(include: { tags: { only: [:id, :name] } }) }
+      render json: { 
+        message: I18n.t('api.success.updated', resource: 'Response'),
+        response: @response.as_json(include: { tags: { only: [:id, :name] } })
+      }
     else
-      render json: { errors: @response.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: I18n.t('api.errors.invalid_data'), errors: @response.errors.full_messages }, status: :unprocessable_entity
     end
   end
-
 
   # PATCH /api/v1/responses/:id/upvote
   def upvote
     @response.increment!(:upvotes)
-    render json: { message: "Upvote successful", response: @response }
+    render json: { message: I18n.t('api.success.action_performed', action: 'Upvote'), response: @response }
   end
 
   # PATCH /api/v1/responses/:id/downvote
   def downvote
     @response.increment!(:downvotes)
-    render json: { message: "Downvote successful", response: @response }
+    render json: { message: I18n.t('api.success.action_performed', action: 'Downvote'), response: @response }
   end
 
   # PATCH /api/v1/responses/:id/like
   def like
     @response.increment!(:likes)
-    render json: { message: "Like successful", response: @response }
+    render json: { message: I18n.t('api.success.action_performed', action: 'Like'), response: @response }
   end
 
   # PATCH /api/v1/responses/:id/toggle_approval
@@ -89,7 +91,7 @@ class Api::V1::ResponsesController < ApplicationController
       @response.query.update!(status: false)
     end
 
-    render json: { message: "Approval toggled", response: @response }
+    render json: { message: I18n.t('api.success.action_performed', action: 'Approval toggled'), response: @response }
   end
 
   # PATCH /api/v1/responses/:id/toggle_flag
@@ -101,7 +103,7 @@ class Api::V1::ResponsesController < ApplicationController
       Rails.logger.error "Failed to save ModerationLog: #{log.errors.full_messages.join(", ")}" unless log.persisted?
     end
 
-    render json: { message: "Flag status toggled", response: @response }
+    render json: { message: I18n.t('api.success.action_performed', action: 'Flag status toggled'), response: @response }
   end
 
   # DELETE /api/v1/responses/:id
@@ -110,27 +112,25 @@ class Api::V1::ResponsesController < ApplicationController
     log = ModerationLog.find_or_initialize_by(response_id: @response.id, action: :soft_delete)
     log.update(updated_at: Time.current)
 
-    render json: { message: "Response deleted successfully" }, status: :ok
+    render json: { message: I18n.t('api.success.deleted', resource: 'Response') }, status: :ok
   end
 
   # PATCH /api/v1/responses/:id/restore
   def restore
     @response.update(discarded_at: nil)
-    render json: { message: "Response restored successfully", response: @response }
+    render json: { message: I18n.t('api.success.action_performed', action: 'Response restored'), response: @response }
   end
 
   private
 
   def set_query
-    @query = Query.find(params[:query_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Query not found" }, status: :not_found
+    @query = Query.find_by(id: params[:query_id])
+    render json: { error: I18n.t('api.errors.not_found') }, status: :not_found unless @query
   end
 
   def set_response
-    @response = Response.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Response not found" }, status: :not_found
+    @response = Response.find_by(id: params[:id])
+    render json: { error: I18n.t('api.errors.not_found') }, status: :not_found unless @response
   end
 
   def response_params
@@ -139,7 +139,8 @@ class Api::V1::ResponsesController < ApplicationController
 
   def authorize_admin!
     unless current_user.admin_user?
-      render json: { error: "Unauthorized" }, status: :unauthorized
+      render json: { error: I18n.t('api.errors.unauthorized') }, status: :unauthorized
     end
   end
+  
 end

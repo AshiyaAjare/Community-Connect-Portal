@@ -25,6 +25,9 @@ module CommunityConnectExp
     config.autoload_lib(ignore: %w[assets tasks])
     config.action_dispatch.rescue_responses["Turbo::Streams::HTMLRequest"] = :not_acceptable
 
+    config.time_zone = 'Asia/Kolkata'  # Change this to your preferred timezone
+    config.active_record.default_timezone = :local
+
 
     # Configuration for the application, engines, and railties goes here.
     #

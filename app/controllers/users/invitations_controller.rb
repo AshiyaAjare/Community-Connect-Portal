@@ -10,9 +10,9 @@ class Users::InvitationsController < Devise::InvitationsController
       end
     end
   
-    def update
-      super
-    end
+    # def update
+    #   super
+    # end
   
     private
   

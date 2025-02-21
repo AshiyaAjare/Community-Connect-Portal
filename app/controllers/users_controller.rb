@@ -18,7 +18,7 @@ class UsersController < ApplicationController
       user = User.find(params[:id])
       
       if current_user.admin_user?
-        if user.invitation_sent_at.nil?
+        if user.invitation_sent_at.nil? || user.invitation_accepted_at.nil?
           user.invite! 
           respond_to do |format|
             format.js 

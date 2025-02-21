@@ -20,7 +20,7 @@ class TagsController < ApplicationController
         flash[:notice] = "Tag created successfully"
         respond_to do |format|
             format.html { redirect_to tags_path, notice: "Tag created successfully" } # Fixed redirect
-            format.turbo_stream # This will look for create.turbo_stream.erb
+            format.turbo_stream 
         end
         else
         flash[:alert] = "Error creating tag: #{@tag.errors.full_messages.join(', ')}"

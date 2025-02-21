@@ -2,51 +2,51 @@ class Api::V1::TagsController < ApplicationController
     # skip_before_action :authenticate_user!, only: [:index, :show]
     before_action :set_tag, only: [:show, :update, :destroy]
 
-    # GET /api/tags
+    # GET /api/v1/tags
     def index
       tags = Tag.all
-      render json: tags
+      render json: { message: I18n.t('api.success.fetched', resource: 'Tags'), tags: tags }
     end
 
-    # GET /api/tags/:id
+    # GET /api/v1/tags/:id
     def show
-      render json: @tag
+      render json: { message: I18n.t('api.success.fetched', resource: 'Tag'), tag: @tag }
     end
 
-    # POST /api/tags
+    # POST /api/v1/tags
     def create
       tag = Tag.new(tag_params)
       if tag.save
-        render json: tag, status: :created
+        render json: { message: I18n.t('api.success.created', resource: 'Tag'), tag: tag }, status: :created
       else
-        render json: { errors: tag.errors.full_messages }, status: :unprocessable_entity
+        render json: { error: I18n.t('api.errors.invalid_data'), errors: tag.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
-    # PATCH/PUT /api/tags/:id
+    # PATCH/PUT /api/v1/tags/:id
     def update
       if @tag.update(tag_params)
-        render json: @tag
+        render json: { message: I18n.t('api.success.updated', resource: 'Tag'), tag: @tag }
       else
-        render json: { errors: @tag.errors.full_messages }, status: :unprocessable_entity
+        render json: { error: I18n.t('api.errors.invalid_data'), errors: @tag.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
-    # DELETE /api/tags/:id
+    # DELETE /api/v1/tags/:id
     def destroy
       @tag.destroy
-      head :no_content
+      render json: { message: I18n.t('api.success.deleted', resource: 'Tag') }, status: :ok
     end
 
     private
 
     def set_tag
-      @tag = Tag.find(params[:id])
-    rescue ActiveRecord::RecordNotFound
-      render json: { error: "Tag not found" }, status: :not_found
+      @tag = Tag.find_by(id: params[:id])
+      render json: { error: I18n.t('api.errors.not_found') }, status: :not_found unless @tag
     end
 
     def tag_params
       params.require(:tag).permit(:name)
     end
+    
 end

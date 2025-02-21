@@ -1,5 +1,5 @@
 class ResponsesController < ApplicationController
-    before_action :authenticate_user! # Ensure user is signed in
+    before_action :authenticate_user! # Ensuring user is signed in
     before_action :authorize_admin!, only: [:upvote, :downvote, :like, :toggle_approval, :toggle_flag]
     before_action :set_response, only: [:destroy, :upvote, :downvote, :like, :toggle_approval, :toggle_flag]
   
