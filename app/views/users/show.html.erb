@@ -1,17 +1,17 @@
 <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
     <div class="card me-2" style="width: 36rem;">
 
-    <%= image_tag(@users.profile_image_url, class: "rounded-circle ", width: 150, height: 150) %>
+    <%= image_tag(@user.display_profile_image_url, class: "rounded-circle ", width: 150, height: 150) %>
 
 
     <div class="card-body">
-        <h5 class="card-title"><%= "#{@users.first_name} #{@users.last_name}" %></h5>
-        <p class="card-text">Role: <%= @users.role.capitalize %></p>
+        <h5 class="card-title"><%= "#{@user.first_name} #{@user.last_name}" %></h5>
+        <p class="card-text">Role: <%= @user.role.capitalize %></p>
     </div>
 
     <ul class="list-group list-group-flush">
     <li class="list-group-item">
-    <%= link_to "Edit Profile", edit_user_path(@users), class: "btn btn-primary" %>
+    <%= link_to "Edit Profile", edit_user_path(@user), class: "btn btn-primary" %>
     </li>
     </ul>
 

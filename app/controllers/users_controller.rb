@@ -7,15 +7,21 @@ class UsersController < ApplicationController
     end
 
     def show
-        @users = User.find(params[:id])
+      Rails.logger.debug "Showing user with ID: #{params[:id]}"
+      @user = User.find_by(id: params[:id])  # ✅ Corrected
+    
+      if @user.nil?
+        redirect_to users_path, alert: "User not found"
+      end
     end
+    
 
     def new
       @user = User.new
     end
 
     def invite
-      user = User.find(params[:id])
+      user = User.find(id: params[:id])
       
       if current_user.admin_user?
         if user.invitation_sent_at.nil? || user.invitation_accepted_at.nil?
@@ -87,7 +93,10 @@ class UsersController < ApplicationController
     
       # Set user based on ID from params
     def set_user
-        @user = User.find(params[:id])
+      @user = User.find_by(id: params[:id])
+      if @user.nil?
+        redirect_to users_path, alert: "User not found"
+      end
     end
 
     def user_params
