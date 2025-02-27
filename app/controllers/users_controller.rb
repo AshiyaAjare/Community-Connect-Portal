@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 
     def show
       Rails.logger.debug "Showing user with ID: #{params[:id]}"
-      @user = User.find_by(id: params[:id])  # ✅ Corrected
+      @user = User.find_by(id: params[:id])  
     
       if @user.nil?
         redirect_to users_path, alert: "User not found"
@@ -21,7 +21,7 @@ class UsersController < ApplicationController
     end
 
     def invite
-      user = User.find(id: params[:id])
+      user = User.find_by(id: params[:id])
       
       if current_user.admin_user?
         if user.invitation_sent_at.nil? || user.invitation_accepted_at.nil?

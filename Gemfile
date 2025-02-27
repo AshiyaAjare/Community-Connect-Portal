@@ -50,6 +50,10 @@ gem "bootsnap", require: false
 #Internationalisation
 gem 'rails-i18n', '~> 7.0', '>= 7.0.9'
 
+#for cors.rb
+gem 'rack-cors'
+
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
