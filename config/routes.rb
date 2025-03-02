@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post '/auth/login', to: 'authentication#login'
+      get "users/me", to: "users#me"
       resources :users, only: [:index, :show, :create, :update]
       resources :tags
       resources :queries
@@ -25,8 +26,17 @@ Rails.application.routes.draw do
         # patch "/restore_response/:id", to: "responses#restore", as: :restore_response
         post :restore, on: :member
       end
+      resources :responses, only: [:index, :show, :update, :destroy] do
+        member do
+          patch :upvote
+          patch :downvote
+          patch :like
+          patch :toggle_approval
+          patch :toggle_flag
+          patch :restore
+        end
+      end
     end
-    resources :responses, only: [:index, :show, :edit, :destroy]
   end
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

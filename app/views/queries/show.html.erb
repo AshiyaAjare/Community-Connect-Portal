@@ -27,7 +27,7 @@
   </div>
   
   <h4>Responses (<%= @query.responses.count %>)</h4>
-  <% if @query.responses.any? %>
+  <% if @query.responses?.any? %>
     <div class="list-group">
       <% @query.responses.each do |response| %>
         <div class="list-group-item">

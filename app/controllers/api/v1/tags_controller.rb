@@ -5,7 +5,10 @@ class Api::V1::TagsController < ApplicationController
     # GET /api/v1/tags
     def index
       tags = Tag.all
-      render json: { message: I18n.t('api.success.fetched', resource: 'Tags'), tags: tags }
+      render json: {
+        message: I18n.t('api.success.fetched', resource: 'Tags'), 
+        tags: tags.as_json(only: [:id, :name]) 
+        }, status: :ok
     end
 
     # GET /api/v1/tags/:id

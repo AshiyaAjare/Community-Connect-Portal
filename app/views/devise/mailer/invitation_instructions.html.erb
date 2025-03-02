@@ -7,7 +7,9 @@
 </p>
 
 <p>
-  <%= link_to "Accept Invitation", accept_user_invitation_url(invitation_token: @token) %>
+  <a href="<%= "#{ENV['FRONTEND_URL']}/accept-invite?token=#{@token}" %>">
+    Accept Invitation
+  </a>
 </p>
 
 <p>If you did not expect this invitation, you can safely ignore this email.</p>

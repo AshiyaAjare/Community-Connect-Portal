@@ -355,6 +355,11 @@ Devise.setup do |config|
   config.responder.error_status = :unprocessable_entity
   config.responder.redirect_status = :see_other
 
+  #devise_invitable
+  config.invite_for = 2.weeks # Invitation expiry time
+  config.allow_insecure_sign_in_after_accept = false
+  config.navigational_formats = [:json]
+
   # ==> Configuration for :registerable
 
   # When set to false, does not sign a user in automatically after their password is

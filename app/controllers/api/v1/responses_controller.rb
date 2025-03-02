@@ -2,7 +2,7 @@ class Api::V1::ResponsesController < ApplicationController
   before_action :authenticate_user! # Ensure user is authenticated
   before_action :set_query, only: [:create]
   before_action :set_response, only: [:show, :update, :destroy, :upvote, :downvote, :like, :toggle_approval, :toggle_flag]
-  before_action :authorize_admin!, only: [:upvote, :downvote, :like, :toggle_approval, :toggle_flag]
+  #before_action :authorize_admin!, only: [:upvote, :downvote, :like, :toggle_approval, :toggle_flag]
 
   # GET /api/v1/responses
   def index

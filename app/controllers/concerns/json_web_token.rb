@@ -11,7 +11,7 @@ module JsonWebToken
   def self.decode(token)
     begin
       decoded = JWT.decode(token, PUBLIC_KEY, true, { algorithm: 'RS256' })[0]
-  
+
       # Verify hash integrity
       expected_hash = Digest::SHA256.hexdigest(decoded.except("hash").to_json)
       if decoded["hash"] != expected_hash

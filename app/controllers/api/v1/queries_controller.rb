@@ -5,14 +5,32 @@ module Api
         before_action :authenticate_user! # Ensure API authentication
   
         # GET /api/v1/queries
-      def index
-        @queries = if params[:search].present?
-                     Query.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
-                   else
-                     Query.includes(:tags, :responses).all
-                   end
-        render json: { message: I18n.t('api.queries.index.success'), queries: @queries }, include: [:tags, :responses], status: :ok
-      end
+        def index
+          @queries = if params[:search].present?
+                       Query.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
+                     else
+                       Query.includes(:tags, :responses, :user).all
+                     end
+        
+          render json: {
+            message: I18n.t('api.queries.index.success'),
+            queries: @queries.as_json(
+              only: [:id, :title, :content, :created_at],
+              include: {
+                user: { only: [:id, :first_name, :last_name] },
+                tags: { only: [:id, :name] },
+                responses: {
+                  only: [:id, :content, :upvotes, :downvotes, :likes, :flagged, :approval, :created_at],
+                  include: {
+                    user: { only: [:id, :first_name, :last_name] } # Include response user details if needed
+                  }
+                }
+              }
+            )
+          }, status: :ok
+        end
+        
+        
 
       # GET /api/v1/queries/:id
       def show
