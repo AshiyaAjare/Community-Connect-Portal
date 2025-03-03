@@ -35,7 +35,22 @@ module Api
 
       # GET /api/v1/queries/:id
       def show
-        render json: { message: I18n.t('api.queries.show.success'), query: @query }, include: [:tags, :responses], status: :ok
+        render json: {
+            message: I18n.t('api.queries.index.success'),
+            query: @query.as_json(
+              only: [:id, :title, :content, :created_at],
+              include: {
+                user: { only: [:id, :first_name, :last_name] },
+                tags: { only: [:id, :name] },
+                responses: {
+                  only: [:id, :content, :upvotes, :downvotes, :likes, :flagged, :approval, :created_at],
+                  include: {
+                    user: { only: [:id, :first_name, :last_name] }
+                  }
+                }
+              }
+            )
+          }, status: :ok
       end
 
       # POST /api/v1/queries

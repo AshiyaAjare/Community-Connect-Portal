@@ -47,7 +47,7 @@ class ResponsesController < ApplicationController
       end
     end
   
-    # PATCH /responses/:id/toggle_approval
+    # PATCH /responses/:id/toggle_app val
     def toggle_approval
       @response = Response.find(params[:id])
       @response.update(approval: !@response.approval)
