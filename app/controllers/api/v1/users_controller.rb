@@ -15,9 +15,10 @@ module Api
             message: I18n.t('api.success.fetched', resource: 'User'),
             user: {
               id: user.id,
-              name: user.name,
+              name: "#{user.first_name} #{user.last_name}",
               email: user.email,
-              role: user.role
+              role: user.role,
+              profile_image_url: user.profile_image_url
             }
           }, status: :ok
         else

@@ -9,7 +9,7 @@ class Api::V1::ResponsesController < ApplicationController
     responses = Response.includes(:tags, :query).kept
     render json: { 
       message: I18n.t('api.success.fetched', resource: 'Responses'),
-      responses: responses.as_json(include: { tags: { only: [:id, :name] }, query: { only: [:id, :title] } })
+      responses: responses.kept.as_json(include: { tags: { only: [:id, :name] }, query: { only: [:id, :title] } })
     }
   end
 
@@ -17,7 +17,7 @@ class Api::V1::ResponsesController < ApplicationController
   def show
     render json: { 
       message: I18n.t('api.success.fetched', resource: 'Response'),
-      response: @response.as_json(include: { tags: { only: [:id, :name] }, query: { only: [:id, :title, :content] } })
+      response: @response.kept.as_json(include: { tags: { only: [:id, :name] }, query: { only: [:id, :title, :content] } })
     }
   end
 

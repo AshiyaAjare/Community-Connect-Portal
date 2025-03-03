@@ -67,6 +67,7 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
   gem 'rspec-rails', '~> 7.0.0'
+  gem 'faker'
 end
 
 group :development do
@@ -83,6 +84,9 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  # gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'shoulda-matchers'
 end
 
 gem "jsbundling-rails", "~> 1.3"
@@ -90,3 +94,5 @@ gem 'hotwire-rails'
 
 gem "devise", "~> 4.9"
 gem "byebug"
+
+gem "active_storage_validations", "~> 2.0"

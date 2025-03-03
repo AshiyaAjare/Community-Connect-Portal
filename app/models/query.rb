@@ -2,7 +2,7 @@ class Query < ApplicationRecord
   include Discard::Model
 
   belongs_to :user
-  has_many :responses, dependent: :destroy
+  has_many :responses, -> { kept }, dependent: :destroy
   has_many :query_tags, dependent: :destroy
   has_many :tags, through: :query_tags
 

@@ -7,9 +7,9 @@ module Api
         # GET /api/v1/queries
         def index
           @queries = if params[:search].present?
-                       Query.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
+                       Query.kept.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
                      else
-                       Query.includes(:tags, :responses, :user).all
+                       Query.includes(:tags, :responses, :user).kept
                      end
         
           render json: {
@@ -22,13 +22,14 @@ module Api
                 responses: {
                   only: [:id, :content, :upvotes, :downvotes, :likes, :flagged, :approval, :created_at],
                   include: {
-                    user: { only: [:id, :first_name, :last_name] } # Include response user details if needed
+                    user: { only: [:id, :first_name, :last_name] }
                   }
                 }
               }
             )
           }, status: :ok
         end
+        
         
         
 

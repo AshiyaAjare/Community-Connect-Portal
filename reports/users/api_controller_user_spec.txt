@@ -1,0 +1,13 @@
+API::V1::Users
+  GET /api/v1/users
+    returns all users
+  GET /api/v1/users/:id
+    returns a user when found
+    returns not found when user does not exist
+  PATCH /api/v1/users/:id
+    updates a user
+  POST /api/v1/users
+    creates a new user
+
+Finished in 0.40984 seconds (files took 1.38 seconds to load)
+5 examples, 0 failures
