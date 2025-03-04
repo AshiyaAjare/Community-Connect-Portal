@@ -1,18 +1,13 @@
 require 'rails_helper'
 
+
 RSpec.describe 'API::V1::Users', type: :request do
   let(:admin) { create(:user, role: :admin_user) }
   let(:user) { create(:user) }
 
-  # Helper method to generate authentication headers
-  def auth_headers(user)
-    token = JsonWebToken.encode(user_id: user.id) # Assuming you have JsonWebToken module
-    { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json' }
-  end
-
   describe 'GET /api/v1/users' do
     it 'returns all users' do
-      get '/api/v1/users', headers: auth_headers(admin) # Add token to request
+      get '/api/v1/users', headers: auth_headers(admin) # Now using the helper method
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)['users']).not_to be_empty
     end
@@ -33,17 +28,17 @@ RSpec.describe 'API::V1::Users', type: :request do
 
   describe 'PATCH /api/v1/users/:id' do
     it 'updates a user' do
-        patch "/api/v1/users/#{user.id}",
-        params: { user: { first_name: 'Updated' } }.to_json,  # Convert to JSON
-        headers: auth_headers(admin).merge('CONTENT_TYPE' => 'application/json')      
+      patch "/api/v1/users/#{user.id}",
+            params: { user: { first_name: 'Updated' } }.to_json,
+            headers: auth_headers(admin).merge('CONTENT_TYPE' => 'application/json')
     end
   end
 
   describe 'POST /api/v1/users' do
     it 'creates a new user' do
-        post '/api/v1/users',
-        params: { user: attributes_for(:user) }.to_json,  # Convert to JSON
-        headers: auth_headers(admin).merge('CONTENT_TYPE' => 'application/json')      
+      post '/api/v1/users',
+           params: { user: attributes_for(:user) }.to_json,
+           headers: auth_headers(admin).merge('CONTENT_TYPE' => 'application/json')
     end
   end
 end

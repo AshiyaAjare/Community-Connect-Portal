@@ -6,7 +6,7 @@ class QueriesController < ApplicationController
       if params[:search].present?
         @queries = Query.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
       else
-        @queries = Query.includes(:tags, :responses).all
+        @queries = Query.includes(:tags, :responses).kept
       end
     end
   

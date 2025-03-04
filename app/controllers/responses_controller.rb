@@ -6,7 +6,7 @@ class ResponsesController < ApplicationController
     # GET /responses
     def index
       
-      @responses = Response.includes(:user, :query, :tags).kept.paginate(page: params[:page], per_page: 6)
+      @responses = Response.kept.includes(:user, :query, :tags).kept.paginate(page: params[:page], per_page: 6)
     end
   
     # PATCH /responses/:id/upvote
@@ -93,6 +93,7 @@ class ResponsesController < ApplicationController
       @response.discard
       log = ModerationLog.find_or_initialize_by(response_id: @response.id, action: :soft_delete)
       log.update(updated_at: Time.current)
+      @response.save!
       respond_to do |format|
         format.html { redirect_to responses_path, notice: "Response deleted." }
         format.turbo_stream do

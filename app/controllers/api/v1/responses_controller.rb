@@ -1,8 +1,8 @@
 class Api::V1::ResponsesController < ApplicationController
-  before_action :authenticate_user! # Ensure user is authenticated
+  before_action :authenticate_user!, unless: -> { request.format.json? }
   before_action :set_query, only: [:create]
-  before_action :set_response, only: [:show, :update, :destroy, :upvote, :downvote, :like, :toggle_approval, :toggle_flag]
-  #before_action :authorize_admin!, only: [:upvote, :downvote, :like, :toggle_approval, :toggle_flag]
+  before_action :set_response, only: [:show, :update, :destroy, :upvote, :downvote, :like, :toggle_approval, :toggle_flag, :restore]
+  
 
   # GET /api/v1/responses
   def index
@@ -30,17 +30,20 @@ class Api::V1::ResponsesController < ApplicationController
   def create
     response = current_user.responses.new(response_params)
     response.query = @query
-
+  
     if response.save
-      response.tags << @query.tags # Attach existing query tags
-      response.tags << Tag.where(id: params[:tag_ids]) if params[:tag_ids] # Attach selected tags
-
+      # Collect all tags, ensuring uniqueness
+      tags_to_assign = Tag.where(id: params[:tag_ids]) - @query.tags if params[:tag_ids]
+      response.tags << tags_to_assign if tags_to_assign.present?
+      
       # Create and attach a new tag if provided
       if params[:new_tag].present?
-        new_tag = Tag.create(name: params[:new_tag])
-        response.tags << new_tag if new_tag.persisted?
+        new_tag = Tag.find_or_create_by(name: params[:new_tag])
+        response.tags << new_tag
       end
-
+  
+      response.tags = response.tags.uniq
+  
       render json: { 
         message: I18n.t('api.success.created', resource: 'Response'),
         response: response.as_json(include: { tags: { only: [:id, :name] } })
@@ -49,11 +52,14 @@ class Api::V1::ResponsesController < ApplicationController
       render json: { error: I18n.t('api.errors.invalid_data'), errors: response.errors.full_messages }, status: :unprocessable_entity
     end
   end
+  
 
   # PUT /api/v1/responses/:id
   def update
+    # Rails.logger.debug "Current User: #{current_user.inspect}"
     permitted_params = response_params
-    permitted_params.except(:approval, :flagged, :likes, :upvotes, :downvotes) unless current_user.admin_user?
+    permitted_params.except(:approval, :flagged, :likes, :upvotes, :downvotes) 
+    # unless current_user.admin_user?
 
     if @response.update(permitted_params)
       render json: { 
@@ -116,7 +122,7 @@ class Api::V1::ResponsesController < ApplicationController
     @response.discard
     log = ModerationLog.find_or_initialize_by(response_id: @response.id, action: :soft_delete)
     log.update(updated_at: Time.current)
-
+    
     render json: { message: I18n.t('api.success.deleted', resource: 'Response') }, status: :ok
   end
 
@@ -147,5 +153,4 @@ class Api::V1::ResponsesController < ApplicationController
       render json: { error: I18n.t('api.errors.unauthorized') }, status: :unauthorized
     end
   end
-  
 end
