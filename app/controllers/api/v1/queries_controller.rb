@@ -15,7 +15,7 @@ module Api
           render json: {
             message: I18n.t('api.queries.index.success'),
             queries: @queries.as_json(
-              only: [:id, :title, :content, :created_at],
+              only: [:id, :title, :content, :created_at, :status],
               include: {
                 user: { only: [:id, :first_name, :last_name] },
                 tags: { only: [:id, :name] },
@@ -38,7 +38,7 @@ module Api
         render json: {
             message: I18n.t('api.queries.index.success'),
             query: @query.as_json(
-              only: [:id, :title, :content, :created_at],
+              only: [:id, :title, :content, :created_at, :status],
               include: {
                 user: { only: [:id, :first_name, :last_name] },
                 tags: { only: [:id, :name] },
@@ -55,15 +55,33 @@ module Api
 
       # POST /api/v1/queries
       def create
-        @query = Query.new(query_params)
-
+        Rails.logger.info "Received query params: #{params.inspect}" # Log incoming params
+      
+        @query = Query.new(query_params.except(:tag_ids, :new_tag)) # Ensure correct params
+      
         if @query.save
-          add_tags_to_query
+          if params[:tag_ids].present?
+            @query.tags = Tag.where(id: params[:tag_ids]) # Assign existing tags
+          end
+      
+          if params[:new_tag].present? && params[:new_tag].strip != ""
+            new_tag = Tag.find_or_create_by(name: params[:new_tag].strip) # Prevent duplicates
+            @query.tags << new_tag
+          end
+      
+          @query.save # Persist tag associations
+      
+          Rails.logger.info "Query tags after saving: #{@query.tags.inspect}" # Debugging log
           render json: { message: I18n.t('api.queries.create.success'), query: @query }, status: :created
         else
+          Rails.logger.error "Query Save Failed: #{@query.errors.full_messages}"
           render json: { errors: @query.errors.full_messages, message: I18n.t('api.queries.create.failure') }, status: :unprocessable_entity
         end
       end
+      
+      
+      
+      
 
       # PATCH/PUT /api/v1/queries/:id
       def update
@@ -122,16 +140,22 @@ module Api
       end
 
       def query_params
-        params.require(:query).permit(:title, :content, :user_id, tag_ids: [], new_tag: {})
+        params.permit(:title, :content, :user_id, :new_tag, tag_ids: [])
       end
 
       def add_tags_to_query
-        @query.tag_ids = params[:query][:tag_ids] if params[:query][:tag_ids].present?
+        if params[:query][:tag_ids].present?
+          @query.tag_ids = params[:query][:tag_ids] 
+        end
+      
         if params[:query][:new_tag].present? && params[:query][:new_tag].strip != ""
           new_tag = Tag.create(name: params[:query][:new_tag])
           @query.tags << new_tag
         end
+      
+        @query.save # Ensure changes are persisted
       end
+      
 
       def log_flag_status
         ModerationLog.find_or_initialize_by(query_id: @query.id, action: :flag).update(updated_at: Time.current)

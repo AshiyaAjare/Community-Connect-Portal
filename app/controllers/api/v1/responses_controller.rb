@@ -6,12 +6,17 @@ class Api::V1::ResponsesController < ApplicationController
 
   # GET /api/v1/responses
   def index
-    responses = Response.includes(:tags, :query).kept
+    responses = Response.includes(:tags, :query, :user).kept
     render json: { 
       message: I18n.t('api.success.fetched', resource: 'Responses'),
-      responses: responses.kept.as_json(include: { tags: { only: [:id, :name] }, query: { only: [:id, :title] } })
+      responses: responses.as_json(include: { 
+        tags: { only: [:id, :name] }, 
+        query: { only: [:id, :title] }, 
+        user: { only: [:id, :first_name, :last_name] } 
+      })
     }
   end
+  
 
   # GET /api/v1/responses/:id
   def show
@@ -48,7 +53,7 @@ class Api::V1::ResponsesController < ApplicationController
   # PUT /api/v1/responses/:id
   def update
     permitted_params = response_params
-    permitted_params.except!(:approval, :flagged, :likes, :upvotes, :downvotes) unless current_user.admin_user?
+    permitted_params.except(:approval, :flagged, :likes, :upvotes, :downvotes) unless current_user.admin_user?
 
     if @response.update(permitted_params)
       render json: { 
@@ -134,7 +139,7 @@ class Api::V1::ResponsesController < ApplicationController
   end
 
   def response_params
-    params.require(:response).permit(:content, :approval, :flagged, :likes, :upvotes, :downvotes, tag_ids: [])
+    params.require(:response).permit(:content, :approval, :flagged, :likes, :upvotes, :downvotes,  :new_tag, tag_ids: [])
   end
 
   def authorize_admin!
