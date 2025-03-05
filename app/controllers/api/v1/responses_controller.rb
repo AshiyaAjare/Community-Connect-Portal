@@ -30,6 +30,8 @@ class Api::V1::ResponsesController < ApplicationController
   def create
     response = current_user.responses.new(response_params)
     response.query = @query
+    response.flagged = true
+
   
     if response.save
       # Collect all tags, ensuring uniqueness
@@ -143,6 +145,8 @@ class Api::V1::ResponsesController < ApplicationController
     @response = Response.find_by(id: params[:id])
     render json: { error: I18n.t('api.errors.not_found') }, status: :not_found unless @response
   end
+
+  
 
   def response_params
     params.require(:response).permit(:content, :approval, :flagged, :likes, :upvotes, :downvotes,  :new_tag, tag_ids: [])

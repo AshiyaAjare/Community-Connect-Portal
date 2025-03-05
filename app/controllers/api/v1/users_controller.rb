@@ -9,7 +9,7 @@ module Api
       end
 
       def show
-        user = User.find_by(id: params[:id])
+        user = User.find(id: params[:id])
         if user
           render json: {
             message: I18n.t('api.success.fetched', resource: 'User'),

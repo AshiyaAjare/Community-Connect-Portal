@@ -44,7 +44,7 @@ class Api::V1::TagsController < ApplicationController
     private
 
     def set_tag
-      @tag = Tag.find_by(id: params[:id])
+      @tag = Tag.find(id: params[:id])
       render json: { error: I18n.t('api.errors.not_found') }, status: :not_found unless @tag
     end
 

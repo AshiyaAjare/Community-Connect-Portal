@@ -21,7 +21,7 @@ class UsersController < ApplicationController
     end
 
     def invite
-      user = User.find_by(id: params[:id])
+      user = User.find(id: params[:id])
       
       if current_user.admin_user?
         if user.invitation_sent_at.nil? || user.invitation_accepted_at.nil?

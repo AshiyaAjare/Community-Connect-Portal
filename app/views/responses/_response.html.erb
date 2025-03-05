@@ -19,11 +19,11 @@
   <!-- Approval Status -->
   <td>
     <% if current_user.admin_user? %>
-      <%= button_to (response.approval ? "Pending" : "Approved"),
+      <%= button_to (response.approval ? "Approved" : "Pending"),
         toggle_approval_response_path(response),
         method: :patch,
         data: { turbo_confirm: "Are you sure you want to change the status?" },
-        class: "btn btn-sm #{response.approval ? 'btn-danger' : 'btn-success'} shadow-sm fw-semibold" %>
+        class: "btn btn-sm #{response.approval ? 'btn-success' : 'btn-danger'} shadow-sm fw-semibold" %>
     <% else %>
       <span class="badge <%= response.approval ? 'bg-success' : 'bg-danger' %> p-2">
         <%= response.approval ? "Approved" : "Pending" %>
