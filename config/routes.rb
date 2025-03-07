@@ -17,8 +17,12 @@ Rails.application.routes.draw do
       get "users/me", to: "users#me"
       resources :users, only: [:index, :show, :create, :update]
       resources :tags
-      resources :queries
+      # resources :queries
       resources :queries do
+        member do
+          patch :update_flag
+          patch :update_status
+        end
         resources :responses, only: [:create]  
       end
       resources :moderation_logs do
@@ -57,6 +61,8 @@ Rails.application.routes.draw do
     member do
       patch :update_status
       patch :update_flag
+      patch :restore
+      
     end
     resources :responses, only: [:create]  
   end
@@ -68,6 +74,7 @@ Rails.application.routes.draw do
       patch :like
       patch :toggle_approval
       patch :toggle_flag
+      patch :restore
     end
   end
 

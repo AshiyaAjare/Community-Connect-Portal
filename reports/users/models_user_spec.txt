@@ -20,7 +20,7 @@ User
     returns the profile image URL if attached (FAILED - 1)
     returns the default Gravatar URL if no image is attached
   role management
-    assigns default role to contributor_user before invitation is created
+    assigns default role to contributor before invitation is created
 
 Failures:
 

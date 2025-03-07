@@ -2,16 +2,16 @@ module Api
     module V1
       class QueriesController < ApplicationController
         before_action :set_query, only: %i[show update destroy update_status update_flag]
-        before_action :authenticate_user! # Ensure API authentication
+        before_action :authenticate_user! 
   
         # GET /api/v1/queries
         def index
           @queries = if params[:search].present?
-                       Query.kept.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").distinct
+                       Query.kept.joins(:tags).where("tags.name LIKE ?", "%#{params[:search]}%").order(id: :desc).distinct
                      else
-                       Query.includes(:tags, :responses, :user).kept
+                       Query.includes(:tags, :responses, :user).order(id: :desc).kept
                      end
-        
+                     
           render json: {
             message: I18n.t('api.queries.index.success'),
             queries: @queries.as_json(
@@ -69,7 +69,7 @@ module Api
             @query.tags << new_tag
           end
       
-          @query.save # Persist tag associations
+          @query.save 
       
           Rails.logger.info "Query tags after saving: #{@query.tags.inspect}" # Debugging log
           render json: { message: I18n.t('api.queries.create.success'), query: @query }, status: :created
@@ -85,10 +85,14 @@ module Api
 
       # PATCH/PUT /api/v1/queries/:id
       def update
+        @query = Query.kept.find_by(id: params[:id]) 
+      
+        return render json: { error: "Query not found" }, status: :not_found unless @query
+      
         if current_user.admin_user?
           @query.assign_attributes(status: params[:query][:status], flagged: params[:query][:flagged])
         end
-
+      
         if @query.update(query_params)
           add_tags_to_query
           render json: { message: I18n.t('api.queries.update.success'), query: @query }, status: :ok
@@ -96,6 +100,7 @@ module Api
           render json: { errors: @query.errors.full_messages, message: I18n.t('api.queries.update.failure') }, status: :unprocessable_entity
         end
       end
+      
 
       # PATCH /api/v1/queries/:id/status
       def update_status
@@ -153,7 +158,7 @@ module Api
           @query.tags << new_tag
         end
       
-        @query.save # Ensure changes are persisted
+        @query.save 
       end
       
 

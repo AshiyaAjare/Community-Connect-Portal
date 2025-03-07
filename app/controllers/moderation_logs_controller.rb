@@ -58,7 +58,7 @@ class ModerationLogsController < ApplicationController
   end
 
   def authorize_moderator_or_admin
-    unless current_user.admin_user? || current_user.moderator_user?
+    unless current_user.admin_user? || current_user.moderator?
       redirect_to root_path, alert: 'Access denied.'
     end
   end

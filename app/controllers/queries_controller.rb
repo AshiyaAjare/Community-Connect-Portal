@@ -1,5 +1,5 @@
 class QueriesController < ApplicationController
-    before_action :set_query, only: %i[show edit update destroy update_status update_flag]
+    before_action :set_query, only: %i[show destroy update_status update_flag]
   
     # GET /queries
     def index
@@ -16,59 +16,59 @@ class QueriesController < ApplicationController
     end
   
     # GET /queries/new
-    def new
-      @query = Query.new
-      @tags = Tag.all
-    end
+    # def new
+    #   @query = Query.new
+    #   @tags = Tag.all
+    # end
   
-    # POST /queries
-    def create
-      @query = Query.new(query_params)
-      @tags = Tag.all
+    # # POST /queries
+    # def create
+    #   @query = Query.new(query_params)
+    #   @tags = Tag.all
   
-      if @query.save
-        # Add selected tags
-        add_tags_to_query
-        redirect_to @query, notice: 'Query was successfully created.'
-      else
-        render :new
-      end
-    end
+    #   if @query.save
+    #     # Add selected tags
+    #     add_tags_to_query
+    #     redirect_to @query, notice: 'Query was successfully created.'
+    #   else
+    #     render :new
+    #   end
+    # end
   
     # GET /queries/1/edit
-    def edit
-      @tags = Tag.all
-    end
+    # def edit
+    #   @tags = Tag.all
+    # end
   
-    # PATCH/PUT /queries/1
-    # PATCH/PUT /queries/1
-    def update
-      if current_user.admin_user?
-        update_admin_fields
-      end
+    # # PATCH/PUT /queries/1
+    # # PATCH/PUT /queries/1
+    # def update
+    #   if current_user.admin_user?
+    #     update_admin_fields
+    #   end
 
-      if @query.update(query_params)
-        add_tags_to_query
-        respond_to do |format|
-          format.html { redirect_to @query, notice: 'Query was successfully updated.' }
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("query-#{@query.id}", 
-              partial: "queries/query", 
-              locals: { query: @query })
-          end
-        end
-      else
-        respond_to do |format|
-          format.html { render :edit, status: :unprocessable_entity }
-          format.turbo_stream do
-            flash.now[:alert] = "Failed to update query."
-            render turbo_stream: turbo_stream.replace("query-form", 
-              partial: "queries/form", 
-              locals: { query: @query })
-          end
-        end
-      end
-    end
+    #   if @query.update(query_params)
+    #     add_tags_to_query
+    #     respond_to do |format|
+    #       format.html { redirect_to @query, notice: 'Query was successfully updated.' }
+    #       format.turbo_stream do
+    #         render turbo_stream: turbo_stream.replace("query-#{@query.id}", 
+    #           partial: "queries/query", 
+    #           locals: { query: @query })
+    #       end
+    #     end
+    #   else
+    #     respond_to do |format|
+    #       format.html { render :edit, status: :unprocessable_entity }
+    #       format.turbo_stream do
+    #         flash.now[:alert] = "Failed to update query."
+    #         render turbo_stream: turbo_stream.replace("query-form", 
+    #           partial: "queries/form", 
+    #           locals: { query: @query })
+    #       end
+    #     end
+    #   end
+    # end
 
 
     # PATCH /queries/:id/status

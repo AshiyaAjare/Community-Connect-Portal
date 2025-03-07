@@ -36,10 +36,10 @@ RSpec.describe User, type: :model do
   end
 
   describe 'role management' do
-    it 'assigns default role to contributor_user before invitation is created' do
+    it 'assigns default role to contributor before invitation is created' do
       user = User.new(email: 'test@example.com', first_name: 'Test', last_name: 'User')
       user.send(:set_default_role) # calling private method directly
-      expect(user.role).to eq('contributor_user')
+      expect(user.role).to eq('contributor')
     end
   end
 end

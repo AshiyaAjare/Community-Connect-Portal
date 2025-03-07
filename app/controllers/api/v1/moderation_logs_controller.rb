@@ -75,7 +75,7 @@ class Api::V1::ModerationLogsController < ApplicationController
     end
 
     def authorize_moderator_or_admin
-        unless current_user.admin_user? || current_user.moderator_user?
+        unless current_user.admin_user? || current_user.moderator?
             render json: { error: I18n.t('api.moderation_logs.unauthorized') }, status: :forbidden
         end
     end

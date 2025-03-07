@@ -10,7 +10,7 @@ class User < ApplicationRecord
 
   
 
-  enum role: {contributor_user: 0, moderator_user: 1, admin_user: 2}
+  enum role: {contributor: 0, moderator: 1, admin_user: 2}
   has_many :queries, dependent: :destroy
   has_many :responses, dependent: :destroy
   has_one_attached :profile_image
@@ -33,7 +33,7 @@ class User < ApplicationRecord
   private
 
   def set_default_role
-    self.role ||= :contributor_user
+    self.role ||= :contributor
   end
   
 

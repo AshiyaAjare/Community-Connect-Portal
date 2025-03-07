@@ -38,7 +38,8 @@ module Api
       end
 
       def update
-        @user = User.find_by(id: params[:id])
+        # @user = User.find_by(id: params[:id])
+        @user = current_user
         if @user.update(user_params)
           @user.profile_image_url = url_for(@user.profile_image) if @user.profile_image.attached?
           @user.save

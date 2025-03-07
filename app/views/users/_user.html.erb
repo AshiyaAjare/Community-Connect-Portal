@@ -21,7 +21,8 @@
             method: :post, remote: true, data: {turbo: false}, class: "btn btn-primary", 
             id: "invite-user-#{user.id}" %>
     <% else %>
-      <h8>Invitation sent at: <%= user.invitation_sent_at %></h8>
+    
+      <h8><%= user.invitation_sent_at.strftime(" %H:%M:%S, %d %b %Y") %></h8>
     <% end %>
   </td>
   <td>
@@ -30,7 +31,7 @@
               method: :post, remote: true, data: {turbo: false}, class: "btn btn-outline-success", 
               id: "invite-user-#{user.id}" %>
       <%else%>
-        <h8>Invitation accepted at: <%= user.invitation_accepted_at %></h8>
+        <h8><%= user.invitation_accepted_at.strftime(" %H:%M:%S, %d %b %Y") %></h8>
       <% end %>
   </td>
 </tr>
