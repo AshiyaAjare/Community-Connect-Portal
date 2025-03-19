@@ -64,7 +64,7 @@ class UsersController < ApplicationController
         
         respond_to do |format|
           format.html { redirect_to users_path, notice: "User created" }
-          format.turbo_stream # This will look for create.turbo_stream.erb
+          format.turbo_stream 
         end
       else
         flash[:alert] = "Error creating user: #{@user.errors.full_messages.join(', ')}"

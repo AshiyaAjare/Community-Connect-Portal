@@ -1,7 +1,7 @@
 module Api
     module V1
       class QueriesController < ApplicationController
-        before_action :set_query, only: %i[show update destroy update_status update_flag]
+        # before_action :set_query, only: %i[show update destroy update_status update_flag]
         before_action :authenticate_user! 
   
         # GET /api/v1/queries
@@ -37,7 +37,7 @@ module Api
       def show
         render json: {
             message: I18n.t('api.queries.index.success'),
-            query: @query.as_json(
+            query: query.as_json(
               only: [:id, :title, :content, :created_at, :status],
               include: {
                 user: { only: [:id, :first_name, :last_name] },
@@ -59,7 +59,7 @@ module Api
       
         @query = Query.new(query_params.except(:tag_ids, :new_tag)) # Ensure correct params
       
-        if @query.save
+        if @query.save!
           if params[:tag_ids].present?
             @query.tags = Tag.where(id: params[:tag_ids]) # Assign existing tags
           end
@@ -85,7 +85,7 @@ module Api
 
       # PATCH/PUT /api/v1/queries/:id
       def update
-        @query = Query.kept.find_by(id: params[:id]) 
+        @query = Query.kept.find(id: params[:id]) 
       
         return render json: { error: "Query not found" }, status: :not_found unless @query
       
@@ -138,8 +138,8 @@ module Api
 
       private
 
-      def set_query
-        @query = Query.find(params[:id])
+      def query
+        @query ||= Query.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render json: { error: I18n.t('api.queries.not_found') }, status: :not_found
       end

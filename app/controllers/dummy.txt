@@ -1,5 +1,0 @@
-Make a query controller for me from this schema:
-Such that
-- All the CRUD operations of query
-- When, a user creates query, they get option to add new tags from existing Tags table and if they want to create a new tag, after creation, it gets added in the tags table.
-- In the table, along with associated query, we can see its tags, (from the query_tag) table. And the number of responses associated with the query.

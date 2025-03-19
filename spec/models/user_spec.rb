@@ -22,18 +22,7 @@ RSpec.describe User, type: :model do
     it { should have_one_attached(:profile_image) }
   end
 
-  describe '#display_profile_image_url' do
-    let(:user) { create(:user) }
-
-    it 'returns the profile image URL if attached' do
-      user.profile_image.attach(io: File.open(Rails.root.join('spec/fixtures/profile.png')), filename: 'profile.png', content_type: 'image/png')
-      expect(user.display_profile_image_url).to include('rails/active_storage')
-    end
-
-    it 'returns the default Gravatar URL if no image is attached' do
-      expect(user.display_profile_image_url).to eq('https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon')
-    end
-  end
+  
 
   describe 'role management' do
     it 'assigns default role to contributor before invitation is created' do

@@ -1,7 +1,7 @@
 module Api
   module V1
     class UsersController < BaseController
-      #skip_before_action :authenticate_user!
+      before_action :authorize_admin!, only: [:index, :create]
 
       def index
         users = User.select(:id, :first_name, :last_name, :email, :role, :profile_image_url)
@@ -9,7 +9,7 @@ module Api
       end
 
       def show
-        user = User.find(id: params[:id])
+        user = User.find_by(id: params[:id])
         if user
           render json: {
             message: I18n.t('api.success.fetched', resource: 'User'),
@@ -38,7 +38,6 @@ module Api
       end
 
       def update
-        # @user = User.find_by(id: params[:id])
         @user = current_user
         if @user.update(user_params)
           @user.profile_image_url = url_for(@user.profile_image) if @user.profile_image.attached?
@@ -49,7 +48,6 @@ module Api
           render json: { error: I18n.t('api.errors.invalid_data'), errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
-
 
       def create
         user = User.new(user_params)
@@ -65,12 +63,11 @@ module Api
       def user_params
         params.require(:user).permit(:first_name, :last_name, :email, :profile_image, :role).tap do |params|
           if params[:password].blank?
-            params.delete(:password) # Remove password if blank
+            params.delete(:password)
             params.delete(:password_confirmation)
           end
         end
       end
-      
 
       def user_response(user)
         {
@@ -82,7 +79,12 @@ module Api
           profile_image_url: user.profile_image_url
         }
       end
-      
+
+      def authorize_admin!
+        unless current_user.admin_user?
+          render json: { error: "Unauthorized" }, status: :unauthorized
+        end
+      end
     end
   end
 end

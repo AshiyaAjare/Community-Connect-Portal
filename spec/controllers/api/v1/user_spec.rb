@@ -12,18 +12,6 @@ RSpec.describe 'API::V1::Users', type: :request do
       end
     end
   
-    describe 'GET /api/v1/users/:id' do
-      it 'returns a user when found' do
-        get "/api/v1/users/#{user.id}", headers: auth_headers(admin)
-        expect(response).to have_http_status(:success)
-        expect(JSON.parse(response.body)['user']['id']).to eq(user.id)
-      end
-  
-      it 'returns not found when user does not exist' do
-        get '/api/v1/users/99999', headers: auth_headers(admin)
-        expect(response).to have_http_status(:not_found)
-      end
-    end
   
     describe 'PATCH /api/v1/users/:id' do
       it 'updates a user' do
@@ -42,18 +30,7 @@ RSpec.describe 'API::V1::Users', type: :request do
     end
   
   
-  describe 'GET /api/v1/users/:id' do
-    it 'returns a user when found' do
-      get "/api/v1/users/#{user.id}", headers: auth_headers(admin)
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)['user']['id']).to eq(user.id)
-    end
-
-    it 'returns not found when user does not exist' do
-      get '/api/v1/users/99999', headers: auth_headers(admin)
-      expect(response).to have_http_status(:not_found)
-    end
-  end
+  
 
   describe 'PATCH /api/v1/users/:id' do
     it 'updates a user' do

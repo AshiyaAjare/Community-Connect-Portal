@@ -8,7 +8,6 @@ class Api::V1::AuthenticationController < Api::V1::BaseController
 
     # Check if the email and password match
     if user&.valid_password?(params[:password])
-      # Generate JWT token and send it to the client
       
       if (user.admin_user? || user.invitation_sent_at.present?) && user.kept?
         token = JsonWebToken.encode(user_id: user.id)

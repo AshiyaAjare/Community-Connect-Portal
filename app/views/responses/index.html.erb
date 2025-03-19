@@ -1,10 +1,7 @@
 <div class="container mt-4">
   <h1 class="mb-4 text-center text-primary fw-bold">Responses Dashboard</h1>
   <div class="input-group rounded mb-4">
-    <%= form_with url: responses_path, method: :get, local: true, class: "d-flex" do %>
-      <%= text_field_tag :search, params[:search], class: "form-control rounded", placeholder: "Search", aria: { label: "Search", describedby: "search-addon" } %>
-      <%= submit_tag "Search", class: "btn btn-outline-primary ms-2" %>
-    <% end %>
+    
   </div>
   <div class="card shadow-lg border-0">
     <div class="card-body p-4">

@@ -1,5 +1,4 @@
 class Api::V1::TagsController < ApplicationController
-    # skip_before_action :authenticate_user!, only: [:index, :show]
     before_action :set_tag, only: [:show, :update, :destroy]
 
     # GET /api/v1/tags
@@ -44,7 +43,7 @@ class Api::V1::TagsController < ApplicationController
     private
 
     def set_tag
-      @tag = Tag.find(id: params[:id])
+      @tag = Tag.find_by(id: params[:id])
       render json: { error: I18n.t('api.errors.not_found') }, status: :not_found unless @tag
     end
 
