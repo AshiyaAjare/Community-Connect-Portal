@@ -35,16 +35,5 @@ module JsonWebToken
   
 end
 
-  # def self.decode(token)
-  #   begin
-  #     decoded = JWT.decode(token, SECRET_KEY)
-  #     # Log the decoded token to debug
-  #     Rails.logger.info("Decoded token: #{decoded}")
-  #     HashWithIndifferentAccess.new(decoded[0])
-  #   rescue JWT::DecodeError => e
-  #     Rails.logger.error("JWT Decode Error: #{e.message}")
-  #     nil
-  #   end
-  # end
 
 
