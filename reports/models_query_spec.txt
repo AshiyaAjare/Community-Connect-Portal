@@ -1,0 +1,16 @@
+Query
+  associations
+    is expected to belong to user required: true
+    is expected to have many responses dependent => destroy
+    is expected to have many query_tags dependent => destroy
+    is expected to have many tags through query_tags
+  validations
+    is expected to validate that :content cannot be empty/falsy
+    is expected to validate that the length of :content is between 10 and 1000
+    is expected to validate that :title cannot be empty/falsy
+    is expected to validate that the length of :title is at most 255
+  soft delete (discard)
+    discards a query instead of deleting it
+
+Finished in 0.3695 seconds (files took 1.39 seconds to load)
+9 examples, 0 failures

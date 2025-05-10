@@ -60,19 +60,40 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super(resource)
   # end
 
-  def create
-    # Build the user resource with sign-up parameters
-    build_resource(sign_up_params)
+  # def create
+  #   # Build the user resource with sign-up parameters
+  #   build_resource(sign_up_params)
 
-    # Set the default role to 'admin_user' if no role is provided
+  #   # Set the default role to 'admin_user' if no role is provided
     
 
-    # Save the resource (user) and handle success or failure
-    if resource.save
-      sign_in(resource_name, resource)  # Sign in the user
-      redirect_to root_path, notice: "Signed up successfully!"  # Redirect after successful sign-up
+  #   # Save the resource (user) and handle success or failure
+  #   if resource.save
+  #     sign_in(resource_name, resource)  # Sign in the user
+  #     redirect_to root_path, notice: "Signed up successfully!"  # Redirect after successful sign-up
+  #   else
+  #     render :new  # Render the sign-up form if there were errors
+  #   end
+  # end
+
+  def create
+    admin_user = current_user # Store the currently signed-in admin before creating a new user
+    
+    super do |user|
+      if admin_user&.admin_user?
+        sign_out user  # Sign out the newly created user
+        sign_in admin_user, bypass: true # Restore the admin session
+        redirect_to users_path and return
+      end
+    end
+  end
+
+  def after_sign_up_path_for(resource)
+    if current_user&.admin_user? # If an admin is creating the user, keep admin signed in
+      users_path # Redirect to users list
     else
-      render :new  # Render the sign-up form if there were errors
+      sign_out resource # Sign out new user if they registered themselves
+      root_path # Redirect new user to login page
     end
   end
   

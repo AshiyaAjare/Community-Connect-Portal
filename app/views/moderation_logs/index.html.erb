@@ -1,0 +1,56 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Moderation Logs</h2>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Action</th>
+        <th>Query/Response</th>
+        <th>Time</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @moderation_logs.each_with_index do |log, index| %>
+        <% 
+          latest_action = ModerationLog.where(query_id: log.query_id).or(ModerationLog.where(response_id: log.response_id)).order(created_at: :desc).first
+          is_soft_deleted = latest_action.present? && latest_action.action == "soft_delete"
+        %>
+        <tr class="<%= 'table-success' if log.action == 'restored' %>">
+          <td><%= index + 1 %></td>
+          <td><%= log.action %></td>
+          <td>
+            <% if log.query_id.present? %>
+              Query: <%= log.query.title %>
+            <% elsif log.response_id.present? %>
+              Response: <%= log.response.content %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+          <td><%= log.updated_at.strftime("%B %d, %Y %I:%M %p") %></td>
+          <td>
+            <%= link_to "View Details", moderation_log_path(log), class: "btn btn-primary btn-sm" %>
+            <% 
+              latest_action = ModerationLog.where(query_id: log.query_id).or(ModerationLog.where(response_id: log.response_id)).order(created_at: :desc).first
+              is_soft_deleted = latest_action.present? && latest_action.action == "soft_delete"
+
+              query_updated = log.query_id.present? && log.query.updated_at > latest_action.updated_at
+              response_updated = log.response_id.present? && log.response.updated_at > latest_action.updated_at
+
+              should_show_restore = is_soft_deleted || query_updated || response_updated
+            %>
+            <% if log.action == "soft_delete" %>
+              <% if should_show_restore %>
+                <%= button_to "Restore", restore_moderation_log_path(log), method: :patch, class: "btn btn-warning btn-sm" %>
+              <% else %>
+                <button class="btn btn-secondary btn-sm" disabled>Restored</button>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

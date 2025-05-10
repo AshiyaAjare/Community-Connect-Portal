@@ -1,0 +1,41 @@
+User
+  validations
+    is expected to validate that :first_name cannot be empty/falsy
+    is expected to validate that the length of :first_name is at most 50
+    is expected to validate that :last_name cannot be empty/falsy
+    is expected to validate that the length of :last_name is at most 50
+    is expected to validate that :email cannot be empty/falsy
+    is expected to validate that :email is case-insensitively unique
+    is expected to allow :email to be ‹"user@example.com"›
+    is expected not to allow :email to be ‹"invalid_email"›
+    is expected to validate that :password cannot be empty/falsy
+    is expected to validate that the length of :password is at least 6
+  associations
+    is expected to have many queries
+    is expected to have many queries dependent => destroy
+    is expected to have many responses
+    is expected to have many responses dependent => destroy
+    is expected to have a has_one_attached called profile_image
+  #display_profile_image_url
+    returns the profile image URL if attached (FAILED - 1)
+    returns the default Gravatar URL if no image is attached
+  role management
+    assigns default role to contributor before invitation is created
+
+Failures:
+
+  1) User#display_profile_image_url returns the profile image URL if attached
+     Failure/Error: user.profile_image.attach(io: File.open(Rails.root.join('spec/fixtures/profile.png')), filename: 'profile.png', content_type: 'image/png')
+     
+     Errno::ENOENT:
+       No such file or directory @ rb_sysopen - /home/ashiya/JOSH/Rails/RailsProject/community-connect-exp/spec/fixtures/profile.png
+     # ./spec/models/user_spec.rb:29:in `initialize'
+     # ./spec/models/user_spec.rb:29:in `open'
+     # ./spec/models/user_spec.rb:29:in `block (3 levels) in <top (required)>'
+
+Finished in 0.39955 seconds (files took 1.49 seconds to load)
+18 examples, 1 failure
+
+Failed examples:
+
+rspec ./spec/models/user_spec.rb:28 # User#display_profile_image_url returns the profile image URL if attached

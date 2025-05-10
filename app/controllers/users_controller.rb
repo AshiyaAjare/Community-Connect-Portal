@@ -3,16 +3,44 @@ class UsersController < ApplicationController
     before_action :set_user, only: [:edit, :update, :show, :destroy]
 
     def index
-        @users = User.kept
+        @users = User.kept.paginate(page: params[:page], per_page: 6)
     end
 
     def show
-        @users = User.find(params[:id])
+      Rails.logger.debug "Showing user with ID: #{params[:id]}"
+      @user = User.find_by(id: params[:id])  
+    
+      if @user.nil?
+        redirect_to users_path, alert: "User not found"
+      end
     end
+    
 
     def new
       @user = User.new
     end
+
+    def invite
+      user = User.find_by(id: params[:id])
+      
+      if current_user.admin_user?
+        if user.invitation_sent_at.nil? || user.invitation_accepted_at.nil?
+          user.invite! 
+          respond_to do |format|
+            format.js 
+            format.html { redirect_to users_path, notice: "User invited" }
+          end
+        else
+          flash[:notice] = "User already invited"
+          #render json: { error: "User already invited" }, status: :unprocessable_entity
+        end
+      else
+        Rails.logger.debug "Role: #{user.role}"
+        redirect_to users_path, alert: "Only admin users can invite other users"
+      end
+
+    end
+  
     
     def create
       params[:user][:role] = params[:user][:role].to_i if params[:user][:role].present?
@@ -20,16 +48,23 @@ class UsersController < ApplicationController
       @user = User.new(user_params)
       
       if @user.save
-        if @user.profile_image.attached?
-          @user.profile_image_url = url_for(@user.profile_image)
+        sign_out @user
+        if params[:user][:profile_image].present?
+          @user.profile_image.attach(params[:user][:profile_image])
+          if @user.profile_image.attached?
+            @user.profile_image_url = url_for(@user.profile_image) 
+          else
+            Rails.logger.debug "Image not attached successfully!"
+          end
         else
-          @user.profile_image_url = url_for('assets/images/default_image.png')
-        end
+          @user.profile_image_url = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon'
+        end                
         @user.save
         flash[:notice] = "User created successfully"
+        
         respond_to do |format|
           format.html { redirect_to users_path, notice: "User created" }
-          format.turbo_stream # This will look for create.turbo_stream.erb
+          format.turbo_stream 
         end
       else
         flash[:alert] = "Error creating user: #{@user.errors.full_messages.join(', ')}"
@@ -58,7 +93,10 @@ class UsersController < ApplicationController
     
       # Set user based on ID from params
     def set_user
-        @user = User.find(params[:id])
+      @user = User.find_by(id: params[:id])
+      if @user.nil?
+        redirect_to users_path, alert: "User not found"
+      end
     end
 
     def user_params

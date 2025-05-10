@@ -1,0 +1,15 @@
+<h2>Invite a New User</h2>
+
+<%= form_for(User.invite!, url: user_invitation_path) do |f| %>
+  <div class="form-group">
+    <%= f.label :email, "User Email" %>
+    <%= f.email_field :email, class: "form-control", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :role, "User Role" %>
+    <%= f.select :role, User.roles.keys.map { |role| [role.humanize, role] }, {}, class: "form-control" %>
+  </div>
+
+  <%= f.submit "Send Invitation", class: "btn btn-success" %>
+<% end %>

@@ -5,7 +5,7 @@
     </div>
     
   </div>
-
+  
   <!-- Turbo Frame for Users Table -->
   <turbo-frame id="users_table">
     <div class="table-responsive">
@@ -17,6 +17,8 @@
             <th>Email</th>
             <th>Role</th>
             <th>Actions</th>
+            <th>Invitation sent at</th>
+            <th>Invitation accepted at</th>
           </tr>
         </thead>
         <tbody id="users_table_body">
@@ -24,5 +26,16 @@
         </tbody>
       </table>
     </div>
+    
+
   </turbo-frame>
+  <%= will_paginate @responses, 
+  class: 'pagination justify-content-center', 
+  previous_label: '<span aria-hidden="true">&laquo;</span>'.html_safe, 
+  next_label: '<span aria-hidden="true">&raquo;</span>'.html_safe 
+  %>
+
+  <a href="<%= new_user_path %>" class="btn btn-success ms-auto">
+      Add User
+    </a>
 </div>

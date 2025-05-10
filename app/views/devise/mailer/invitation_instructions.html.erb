@@ -1,0 +1,15 @@
+<p>Hello <%= @resource.email %>,</p>
+
+<p>You have been invited to join LinkUp, community - connect platform!</p>
+
+<p>
+  To accept the invitation, click the link below:
+</p>
+
+<p>
+  <a href="<%= "#{ENV['FRONTEND_URL']}/accept-invite?token=#{@token}" %>">
+    Accept Invitation
+  </a>
+</p>
+
+<p>If you did not expect this invitation, you can safely ignore this email.</p>

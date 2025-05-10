@@ -17,6 +17,7 @@ gem "sqlite3", ">= 1.4"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
+gem "htmlbeautifier"
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
@@ -24,6 +25,13 @@ gem "turbo-rails"
 gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
+#Pagination
+gem "will_paginate", "~> 3.3"
+gem 'will_paginate-bootstrap'
+
+#invitable gem
+gem 'devise_invitable', '~> 2.0.0'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -39,6 +47,13 @@ gem "tzinfo-data", platforms: %i[ mswin mswin64 mingw x64_mingw jruby ]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
+#Internationalisation
+gem 'rails-i18n', '~> 7.0', '>= 7.0.9'
+
+#for cors.rb
+gem 'rack-cors'
+
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -51,6 +66,8 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  gem 'rspec-rails', '~> 7.0.0'
+  gem 'faker'
 end
 
 group :development do
@@ -67,9 +84,17 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  # gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'shoulda-matchers'
+  gem 'simplecov', require: false
+  gem 'rails-controller-testing'
 end
 
 gem "jsbundling-rails", "~> 1.3"
 gem 'hotwire-rails'
 
 gem "devise", "~> 4.9"
+gem "byebug"
+
+gem "active_storage_validations", "~> 2.0"

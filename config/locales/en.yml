@@ -28,4 +28,55 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  api:
+    success:
+      fetched: "%{resource} successfully fetched"
+      created: "%{resource} was successfully created"
+      updated: "%{resource} was successfully updated"
+      deleted: "%{resource} was successfully deleted"
+      action_performed: "%{action} performed successfully"
+      restored: "%{resource} was successfully restored"
+      status_updated: "%{resource} status updated"
+      flag_updated: "%{resource} flag status updated"
+    errors:
+      not_found: "%{resource} not found"
+      invalid_data: "Invalid input data"
+      unauthorized: "Unauthorized"
+      forbidden: "Not authorized"
+    queries:
+      index:
+        success: "Queries successfully fetched"
+      show:
+        success: "Query successfully fetched"
+      create:
+        success: "Query successfully created"
+        failure: "Failed to create query"
+      update:
+        success: "Query successfully updated"
+        failure: "Failed to update query"
+      update_status:
+        success: "Query status updated"
+        forbidden: "Not authorized to update status"
+      update_flag:
+        success: "Query flag status updated"
+        forbidden: "Not authorized to update flag status"
+      destroy:
+        success: "Query successfully deleted"
+      restore:
+        success: "Query successfully restored"
+      not_found: "Query not found"
+    moderation_logs:
+      index:
+        success: "Moderation logs fetched successfully."
+      show:
+        success: "Moderation log details fetched successfully."
+      create:
+        success: "Moderation log created successfully."
+        failure: "Failed to create moderation log."
+      destroy:
+        success: "Moderation log deleted successfully."
+        failure: "Failed to delete moderation log."
+      restore:
+        success: "Moderation log restored successfully."
+      not_found: "Moderation log not found."
+      unauthorized: "Access denied."

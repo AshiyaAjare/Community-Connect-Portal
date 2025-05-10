@@ -1,64 +1,47 @@
-        
-<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-<div class="card p-6" style="width: 36rem;">
-    
-<%= form_with model: @user, url: users_path, method: :post, data: { turbo: true } do |f| %>
-    <!-- 2 column grid layout with text inputs for the first and last names -->
-    <div class="row mb-4">
-        <div class="col">
-        <div data-mdb-input-init class="form-outline">
-            <%= f.label :first_name, "First name", class: "form-label", for: "form3Example1" %>
-            <%= f.text_field :first_name, class: "form-control", id: "form3Example1", required: true %>
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg p-4 rounded" style="width: 36rem;">
+    <div class="card-body">
+      <h3 class="text-center mb-4">Create User</h3>
+
+      <%= form_with model: @user, url: users_path, method: :post, html: { multipart: true }, data: { turbo: true } do |f| %>
+        <!-- Name fields -->
+        <div class="row mb-3">
+          <div class="col">
+            <%= f.label :first_name, "First Name", class: "form-label" %>
+            <%= f.text_field :first_name, class: "form-control", required: true %>
+          </div>
+          <div class="col">
+            <%= f.label :last_name, "Last Name", class: "form-label" %>
+            <%= f.text_field :last_name, class: "form-control", required: true %>
+          </div>
         </div>
+
+        <!-- Email input -->
+        <div class="mb-3">
+          <%= f.label :email, "Email", class: "form-label" %>
+          <%= f.text_field :email, class: "form-control", required: true %>
         </div>
-        <div class="col">
-        <div data-mdb-input-init class="form-outline">
-            <%= f.label :last_name, "Last name", class: "form-label", for: "form3Example2" %>
-            <%= f.text_field :last_name, class: "form-control", id: "form3Example2", required: true %>
+
+        <!-- Password input -->
+        <div class="mb-3">
+          <%= f.label :password, "Password", class: "form-label" %>
+          <%= f.password_field :password, class: "form-control", required: true %>
         </div>
+
+        <!-- Role dropdown -->
+        <div class="mb-3">
+          <%= f.label :role, "Role", class: "form-label" %>
+          <%= f.select :role, 
+               [["Contributor", "contributor"], ["Moderator", "moderator"]], 
+               { prompt: "Select Role" }, 
+               { class: "form-select" } %>
         </div>
+
+        <!-- Submit button -->
+        <div class="d-grid">
+          <%= f.submit 'Create User', class: "btn btn-primary" %>
+        </div>
+      <% end %>
     </div>
-
-    <!-- Email input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <%= f.label :email, "Email", class: "form-label", for: "form3Example3" %>
-        <%= f.text_field :email, class: "form-control", id: "form3Example3", required: true %>
-    </div>
-
-    <!-- Password input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <%= f.label :password, "Password", class: "form-label", for: "form3Example4" %>
-        <%= f.password_field :password, class: "form-control", id: "form3Example4", required: true %>
-    </div>
-
-    <!-- Dropdown -->
-    <div data-mdb-input-init class="form-outline mb-4">
-    <%= f.label :role, "Role", class: "form-label" %>
-    <%= f.select :role, 
-         [["Contributor", "contributor_user"], ["Moderator", "moderator_user"], ["Admin", "admin_user"]], 
-         { prompt: "Select Role" }, 
-         { class: "form-select", aria: { label: "Default select example" } } %>
-
-
-    </div>
-
-
-    <!--Image-->
-    <div class="mb-3">
-        <%= f.label :profile_image, "Profile Image", class: "form-label", for: "formFileSm" %>
-        <%= f.file_field :profile_image, class: "form-control form-control-sm", id: "formFileSm" %>
-    </div>
-
-
-    <!-- Submit button -->
-    <%= f.submit 'Create User', class: "btn btn-primary btn-block mb-4", data: { mdb_ripple_init: true } %>
-
-
-    <!-- Register buttons -->
-    <div class="text-center">
-        
-    </div>
-    <%end%>
-    
-</div>
+  </div>
 </div>

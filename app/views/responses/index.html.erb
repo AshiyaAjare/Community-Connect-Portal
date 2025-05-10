@@ -1,0 +1,36 @@
+<div class="container mt-4">
+  <h1 class="mb-4 text-center text-primary fw-bold">Responses Dashboard</h1>
+  <div class="input-group rounded mb-4">
+    
+  </div>
+  <div class="card shadow-lg border-0">
+    <div class="card-body p-4">
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm align-middle">
+          <thead class="table-dark text-center">
+            <tr>
+              <th>User</th>
+              <th>Query</th>
+              <th>Content</th>
+              <th>Tags</th>
+              <th>Approval</th>
+              <th>Likes</th>
+              <th>Upvotes</th>
+              <th>Downvotes</th>
+              <th>Flagged</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="responses-table">
+            <%= render partial: 'responses/response', collection: @responses, as: :response %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <%= will_paginate @responses, 
+  class: 'pagination justify-content-center', 
+  previous_label: '<span aria-hidden="true">&laquo;</span>'.html_safe, 
+  next_label: '<span aria-hidden="true">&raquo;</span>'.html_safe 
+  %>
+</div>
